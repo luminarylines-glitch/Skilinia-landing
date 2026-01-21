@@ -28,7 +28,7 @@ function SkillHub() {
                         transition={{ duration: 1, ease: "easeOut" }}
                     >
                         <h1 className="font-display text-5xl sm:text-7xl font-bold tracking-tighter text-white leading-tight drop-shadow-2xl bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
-                            Why Clients Love<br />Skilinia Editors
+                            Choose Your<br />Starting Path
                         </h1>
                     </motion.div>
 
@@ -38,7 +38,7 @@ function SkillHub() {
                         transition={{ duration: 1, delay: 0.4 }}
                         className="text-gray-400 text-sm tracking-[0.2em] uppercase font-medium max-w-lg mx-auto"
                     >
-                        Skilinia takes care of the tedious tasks so you can focus on mastering the craft.
+                        Each path is focused. Start with one.
                     </motion.p>
                 </div>
 
@@ -52,6 +52,7 @@ function SkillHub() {
                             title="Dropshipping"
                             subtitle="Sell Globally"
                             description="Coming Soon"
+                            actionLabel="EXPLORE"
                             delay={0.2}
                             variant="secondary"
                         />
@@ -65,8 +66,9 @@ function SkillHub() {
                         <SkillCard
                             to="/editorslaunchpad"
                             title="Video Editing"
-                            subtitle="Start Here"
+                            subtitle="Short-Form"
                             description="Get your first paid client."
+                            actionLabel="START HERE"
                             delay={0}
                             variant="primary"
                         />
@@ -79,6 +81,7 @@ function SkillHub() {
                             title="Digital Products"
                             subtitle="Build Systems"
                             description="Coming Soon"
+                            actionLabel="EXPLORE"
                             delay={0.4}
                             variant="secondary"
                         />
@@ -95,7 +98,7 @@ function SkillHub() {
     );
 }
 
-function SkillCard({ to, title, subtitle, description, delay, variant }) {
+function SkillCard({ to, title, subtitle, description, actionLabel, delay, variant }) {
     const isPrimary = variant === 'primary';
 
     return (
@@ -118,16 +121,16 @@ function SkillCard({ to, title, subtitle, description, delay, variant }) {
             {/* Subtle Gradient Stroke */}
             <div className={`absolute inset-0 rounded-3xl border ${isPrimary ? 'border-white/10' : 'border-white/5'} pointer-events-none`}></div>
 
-            {/* VOLUMETRIC RAY (Primary Only) */}
+            {/* VOLUMETRIC RAY (Primary Only - Recommended Path Glow) */}
             {isPrimary && (
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent blur-3xl pointer-events-none"></div>
             )}
 
             {/* CONTENT */}
-            <div className="relative z-10 flex flex-col items-center gap-4">
+            <div className="relative z-10 flex flex-col items-center gap-6">
                 {/* Avatar / Icon Placeholder */}
                 <div className={`
-                    w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold mb-2
+                    w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold
                     ${isPrimary
                         ? 'bg-gradient-to-b from-cyan-400 to-emerald-500 text-black shadow-[0_0_20px_rgba(52,211,153,0.4)]'
                         : 'bg-white/5 text-gray-500 border border-white/5'}
@@ -135,7 +138,7 @@ function SkillCard({ to, title, subtitle, description, delay, variant }) {
                     {title.charAt(0)}
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-2">
                     <h3 className={`text-2xl font-semibold tracking-tight ${isPrimary ? 'text-white' : 'text-gray-400'}`}>
                         {title}
                     </h3>
@@ -144,29 +147,14 @@ function SkillCard({ to, title, subtitle, description, delay, variant }) {
                     </p>
                 </div>
 
-                {/* Play Button / Action Visual */}
+                {/* Action Label (Replaces Play Button & Status Bar) */}
                 <div className={`
-                    mt-6 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300
+                    mt-4 px-6 py-3 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 border
                     ${isPrimary
-                        ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/10 hover:scale-110'
-                        : 'bg-white/5 text-gray-600 border border-white/5'}
+                        ? 'bg-white/10 text-white border-white/20 group-hover:bg-cyan-500 group-hover:text-black group-hover:border-cyan-500 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.5)]'
+                        : 'bg-transparent text-gray-600 border-white/5 group-hover:border-white/20 group-hover:text-white'}
                 `}>
-                    {isPrimary ? (
-                        <svg className="w-5 h-5 fill-current translate-x-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                    ) : (
-                        <svg className="w-5 h-5 fill-current opacity-50" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                    )}
-                </div>
-
-                <div className="mt-8 w-full">
-                    {/* Progress Bar Visual (For aesthetics) */}
-                    <div className="flex justify-between text-[9px] font-mono text-gray-500 mb-1 uppercase tracking-wider">
-                        <span>Status</span>
-                        <span>{isPrimary ? 'Active' : 'Locked'}</span>
-                    </div>
-                    <div className="w-full h-[2px] bg-gray-800 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${isPrimary ? 'bg-gradient-to-r from-cyan-400 to-emerald-400 w-3/4' : 'bg-gray-700 w-1/4'}`}></div>
-                    </div>
+                    {actionLabel} <span className="ml-1">&rarr;</span>
                 </div>
             </div>
 
