@@ -152,10 +152,6 @@ function EditorsLaunchpad() {
                 width: 700,
                 hideTitle: true,
                 overlay: true,
-                emoji: {
-                    text: '👋',
-                    animation: 'wave'
-                },
                 autoClose: 0
             });
         } else {
