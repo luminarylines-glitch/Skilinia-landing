@@ -33,7 +33,11 @@ const SKILLS = [
 ];
 
 function SkillHub() {
-    const [activeIndex, setActiveIndex] = useState(1); // Start with Video Editing (Index 1)
+    const [activeIndex, setActiveIndex] = useState(1); // Start with Video Editing
+
+    const jumpToSlide = (index) => {
+        setActiveIndex(index);
+    };
 
     const nextSlide = () => {
         setActiveIndex((prev) => (prev + 1) % SKILLS.length);
@@ -43,10 +47,46 @@ function SkillHub() {
         setActiveIndex((prev) => (prev - 1 + SKILLS.length) % SKILLS.length);
     };
 
-    // Derived positions
-    const centerCard = SKILLS[activeIndex];
-    const leftCard = SKILLS[(activeIndex - 1 + SKILLS.length) % SKILLS.length];
-    const rightCard = SKILLS[(activeIndex + 1) % SKILLS.length];
+    // Calculate dynamic styles for each card based on its offset from activeIndex
+    const getCardStyle = (index) => {
+        const total = SKILLS.length;
+        // Calculate offset: 0 (center), 1 (right), -1 or 2 (left)
+        // We want a stable mapping: -1 (left), 0 (center), 1 (right)
+
+        // This math ensures we get relative indices like -1, 0, 1 for the 3 visual slots
+        let offset = (index - activeIndex + total) % total;
+        if (offset === 2) offset = -1; // Specific for 3-item carousel: 2 becomes -1 (Left)
+
+        // Variants for positions
+        if (offset === 0) {
+            return {
+                x: 0,
+                scale: 1,
+                opacity: 1,
+                zIndex: 20,
+                blur: 0,
+                isPrimary: true
+            };
+        } else if (offset === 1) {
+            return {
+                x: 380, // Slide Right
+                scale: 0.9,
+                opacity: 0.4,
+                zIndex: 10,
+                blur: 0,
+                isPrimary: false
+            };
+        } else {
+            return {
+                x: -380, // Slide Left
+                scale: 0.9,
+                opacity: 0.4,
+                zIndex: 10,
+                blur: 0,
+                isPrimary: false
+            };
+        }
+    };
 
     return (
         <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col relative overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -57,10 +97,10 @@ function SkillHub() {
             <div className="absolute inset-0 bg-noise opacity-[0.04] pointer-events-none mix-blend-overlay"></div>
 
             {/* Main Content */}
-            <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 relative z-10 py-12 sm:py-20">
+            <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 relative z-10 py-12 sm:py-20 h-full">
 
                 {/* HEADLINES */}
-                <div className="text-center max-w-4xl mx-auto mb-16 space-y-6 relative z-10">
+                <div className="text-center max-w-4xl mx-auto mb-8 sm:mb-16 space-y-6 relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -81,46 +121,46 @@ function SkillHub() {
                     </motion.p>
                 </div>
 
-                {/* THE STAGE (Carousel) */}
-                <div className="relative w-full max-w-7xl mx-auto flex flex-col items-center justify-center gap-12">
+                {/* THE STAGE (Carousel Container) */}
+                <div className="relative w-full max-w-7xl mx-auto h-[400px] flex items-center justify-center perspective-[1000px] overflow-visible">
 
-                    <div className="relative flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 perspective-[1000px]">
+                    {SKILLS.map((skill, index) => {
+                        const style = getCardStyle(index);
 
-                        {/* LEFT CARD (Recessed) */}
-                        <div
-                            className="order-2 md:order-1 scale-90 opacity-40 hover:opacity-80 transition-all duration-500 z-0 text-center cursor-pointer hidden md:block"
-                            onClick={prevSlide}
-                        >
-                            <SkillCard data={leftCard} variant="secondary" />
-                        </div>
-
-                        {/* CENTER CARD (Spotlight) */}
-                        <AnimatePresence mode="wait">
+                        return (
                             <motion.div
-                                key={centerCard.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.9 }}
-                                transition={{ duration: 0.4 }}
-                                className="order-1 md:order-2 z-20 relative"
+                                key={skill.id}
+                                className="absolute top-1/2 left-1/2"
+                                initial={false}
+                                animate={{
+                                    x: `calc(-50% + ${style.x}px)`, // Center element + offset
+                                    y: "-50%",
+                                    scale: style.scale,
+                                    opacity: style.opacity,
+                                    zIndex: style.zIndex,
+                                }}
+                                transition={{
+                                    duration: 0.5,
+                                    ease: [0.2, 0.8, 0.2, 1] // Smooth "authentic" easing
+                                }}
+                                onClick={() => {
+                                    if (!style.isPrimary) jumpToSlide(index);
+                                }}
                             >
-                                {/* Halo Glow */}
-                                <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-b from-cyan-400/30 via-emerald-400/10 to-transparent blur-md opacity-70 pointer-events-none"></div>
-                                <SkillCard data={centerCard} variant="primary" />
-                            </motion.div>
-                        </AnimatePresence>
+                                <div className={`cursor-pointer ${!style.isPrimary ? 'hover:brightness-125 transition-all' : ''}`}>
+                                    {/* Halo Glow for Primary Only */}
+                                    {style.isPrimary && (
+                                        <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-b from-cyan-400/30 via-emerald-400/10 to-transparent blur-md opacity-70 pointer-events-none transition-all duration-500"></div>
+                                    )}
 
-                        {/* RIGHT CARD (Recessed) */}
-                        <div
-                            className="order-3 md:order-3 scale-90 opacity-40 hover:opacity-80 transition-all duration-500 z-0 text-center cursor-pointer hidden md:block"
-                            onClick={nextSlide}
-                        >
-                            <SkillCard data={rightCard} variant="secondary" />
-                        </div>
-                    </div>
+                                    <SkillCard data={skill} variant={style.isPrimary ? 'primary' : 'secondary'} />
+                                </div>
+                            </motion.div>
+                        );
+                    })}
 
                     {/* Navigation Buttons (Swipe Controls) */}
-                    <div className="flex items-center gap-6 z-30">
+                    <div className="absolute -bottom-24 flex items-center gap-6 z-30">
                         <button
                             onClick={prevSlide}
                             className="w-12 h-12 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-all hover:scale-110 active:scale-95 group"
@@ -165,25 +205,23 @@ function SkillCard({ data, variant }) {
     return (
         <div className={`
             relative w-[300px] h-[320px] sm:w-[340px] sm:h-[360px] rounded-3xl overflow-hidden
-            flex flex-col items-center justify-center text-center p-8 group transition-all duration-300
+            flex flex-col items-center justify-center text-center p-8 group transition-all duration-500
             ${isPrimary ? 'bg-[#080808] shadow-2xl' : 'bg-[#030303]'}
         `}>
-            {/* Make the whole card a link if primary, otherwise just decorative or navigation */}
-            {isPrimary && <Link to={to} className="absolute inset-0 z-20"></Link>}
+            {/* Link only works if primary to avoid accidental clicks when swiping */}
+            <Link to={to} className={`absolute inset-0 z-20 ${!isPrimary ? 'pointer-events-none' : ''}`}></Link>
 
             {/* Top Highlight */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50"></div>
-            <div className={`absolute inset-0 rounded-3xl border ${isPrimary ? 'border-white/10' : 'border-white/5'} pointer-events-none`}></div>
+            <div className={`absolute inset-0 rounded-3xl border ${isPrimary ? 'border-white/10' : 'border-white/5'} pointer-events-none transition-colors duration-500`}></div>
 
             {/* Volumetric Ray */}
-            {isPrimary && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent blur-3xl pointer-events-none"></div>
-            )}
+            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent blur-3xl pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'}`}></div>
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center gap-6">
                 <div className={`
-                    w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold
+                    w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-500
                     ${isPrimary
                         ? 'bg-gradient-to-b from-cyan-400 to-emerald-500 text-black shadow-[0_0_20px_rgba(52,211,153,0.4)]'
                         : 'bg-white/5 text-gray-500 border border-white/5'}
@@ -192,10 +230,10 @@ function SkillCard({ data, variant }) {
                 </div>
 
                 <div className="space-y-2">
-                    <h3 className={`text-2xl font-semibold tracking-tight ${isPrimary ? 'text-white' : 'text-gray-400'}`}>
+                    <h3 className={`text-2xl font-semibold tracking-tight transition-colors duration-500 ${isPrimary ? 'text-white' : 'text-gray-400'}`}>
                         {title}
                     </h3>
-                    <p className={`text-[10px] uppercase tracking-widest font-bold ${isPrimary ? 'text-cyan-400' : 'text-gray-600'}`}>
+                    <p className={`text-[10px] uppercase tracking-widest font-bold transition-colors duration-500 ${isPrimary ? 'text-cyan-400' : 'text-gray-600'}`}>
                         {subtitle}
                     </p>
                 </div>
@@ -211,11 +249,10 @@ function SkillCard({ data, variant }) {
             </div>
 
             {/* Bottom Glow */}
-            {isPrimary && (
-                <div className="absolute bottom-[-20%] left-0 right-0 h-[40%] bg-cyan-500/10 blur-[40px] pointer-events-none"></div>
-            )}
+            <div className={`absolute bottom-[-20%] left-0 right-0 h-[40%] bg-cyan-500/10 blur-[40px] pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'}`}></div>
         </div>
     );
 }
 
 export default SkillHub;
+```
