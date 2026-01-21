@@ -19,13 +19,13 @@ export const DollarBill = () => {
                 }}
                 initial={{ x: -200, opacity: 0, rotate: 0 }}
                 animate={{
-                    x: [-200, -192, -192, 500], // Start Left -> Peek (8px) -> Pause -> Fly Right
+                    x: [-200, -192, -192, 500, 500], // Start Left -> Peek (8px) -> Pause -> Fly Right -> End
                     opacity: [0, 0.4, 0.4, 0.7, 0], // Hidden -> Visible(Peek) -> Hold -> Readable -> Fade
                     rotate: [0, 0, 0, 10, 10], // No tilt during peek, tilt during fly
                 }}
                 transition={{
                     duration: 1.6, // Total sequence time
-                    times: [0, 0.31, 0.47, 1], // Timing distribution
+                    times: [0, 0.31, 0.47, 0.8, 1], // Timing distribution (5 points)
                     ease: "easeInOut",
                     delay: 0.5,
                 }}
