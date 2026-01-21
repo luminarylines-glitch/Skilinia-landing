@@ -140,6 +140,12 @@ function EditorsLaunchpad() {
 
     const handleContinue = () => {
         if (!isUnlocked) return;
+
+        // Meta Pixel Event
+        if (typeof window.fbq === 'function') {
+            window.fbq('track', 'InitiateCheckout');
+        }
+
         window.location.href = "https://tally.so/r/1A4Z8p";
     };
 
