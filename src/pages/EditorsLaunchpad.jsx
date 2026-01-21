@@ -149,6 +149,8 @@ function EditorsLaunchpad() {
         // Open Tally Popup
         if (typeof window.Tally !== 'undefined') {
             window.Tally.openPopup('1A4Z8p', {
+                layout: 'modal',
+                align: 'center',
                 width: 700,
                 hideTitle: true,
                 overlay: true,
