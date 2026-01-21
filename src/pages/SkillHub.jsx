@@ -255,4 +255,3 @@ function SkillCard({ data, variant }) {
 }
 
 export default SkillHub;
-```
