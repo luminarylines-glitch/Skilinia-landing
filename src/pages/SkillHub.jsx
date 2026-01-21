@@ -34,6 +34,15 @@ const SKILLS = [
 
 function SkillHub() {
     const [activeIndex, setActiveIndex] = useState(1); // Start with Video Editing
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Detect mobile for conditional heavy effects
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const jumpToSlide = (index) => {
         setActiveIndex(index);
@@ -92,8 +101,9 @@ function SkillHub() {
         <div className="min-h-screen bg-[#020202] text-white font-sans flex flex-col relative overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
 
             {/* --- ATMOSPHERE --- */}
-            <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-b from-cyan-500/10 via-emerald-500/5 to-transparent rounded-full blur-[80px] pointer-events-none"></div>
+            {/* Reduced blur radius and opacity on mobile to save GPU */}
+            <div className={`absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emerald-500/10 rounded-full pointer-events-none mix-blend-screen ${isMobile ? 'blur-[60px]' : 'blur-[120px]'}`}></div>
+            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-b from-cyan-500/10 via-emerald-500/5 to-transparent rounded-full pointer-events-none ${isMobile ? 'blur-[40px]' : 'blur-[80px]'}`}></div>
             <div className="absolute inset-0 bg-noise opacity-[0.04] pointer-events-none mix-blend-overlay"></div>
 
             {/* Main Content */}
@@ -126,34 +136,41 @@ function SkillHub() {
 
                     {SKILLS.map((skill, index) => {
                         const style = getCardStyle(index);
+                        const xOffset = isMobile
+                            ? (style.x === 0 ? 0 : (style.x > 0 ? 40 : -40)) // Much tighter spread on mobile to keep items visible/clickable
+                            : style.x;
 
                         return (
                             <motion.div
                                 key={skill.id}
-                                className="absolute top-1/2 left-1/2"
+                                className="absolute top-1/2 left-1/2 will-change-transform" // Hardware acceleration hint
                                 initial={false}
                                 animate={{
-                                    x: `calc(-50% + ${style.x}px)`, // Center element + offset
+                                    x: `calc(-50% + ${xOffset}px)`,
                                     y: "-50%",
                                     scale: style.scale,
                                     opacity: style.opacity,
                                     zIndex: style.zIndex,
                                 }}
                                 transition={{
-                                    duration: 0.5,
-                                    ease: [0.2, 0.8, 0.2, 1] // Smooth "authentic" easing
+                                    duration: 0.4, // Slightly faster for snappier feel
+                                    ease: [0.2, 0.8, 0.2, 1]
                                 }}
                                 onClick={() => {
                                     if (!style.isPrimary) jumpToSlide(index);
                                 }}
+                                style={{
+                                    backfaceVisibility: 'hidden', // Performance optimization
+                                    WebkitFontSmoothing: 'antialiased'
+                                }}
                             >
                                 <div className={`cursor-pointer ${!style.isPrimary ? 'hover:brightness-125 transition-all' : ''}`}>
-                                    {/* Halo Glow for Primary Only */}
+                                    {/* Halo Glow - Simplified on mobile */}
                                     {style.isPrimary && (
-                                        <div className="absolute -inset-[2px] rounded-3xl bg-gradient-to-b from-cyan-400/30 via-emerald-400/10 to-transparent blur-md opacity-70 pointer-events-none transition-all duration-500"></div>
+                                        <div className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-b from-cyan-400/30 via-emerald-400/10 to-transparent opacity-70 pointer-events-none transition-all duration-500 ${isMobile ? 'blur-sm' : 'blur-md'}`}></div>
                                     )}
 
-                                    <SkillCard data={skill} variant={style.isPrimary ? 'primary' : 'secondary'} />
+                                    <SkillCard data={skill} variant={style.isPrimary ? 'primary' : 'secondary'} isMobile={isMobile} />
                                 </div>
                             </motion.div>
                         );
@@ -198,7 +215,7 @@ function SkillHub() {
     );
 }
 
-function SkillCard({ data, variant }) {
+function SkillCard({ data, variant, isMobile }) {
     const isPrimary = variant === 'primary';
     const { to, title, subtitle, description, actionLabel } = data;
 
@@ -206,7 +223,8 @@ function SkillCard({ data, variant }) {
         <div className={`
             relative w-[300px] h-[320px] sm:w-[340px] sm:h-[360px] rounded-3xl overflow-hidden
             flex flex-col items-center justify-center text-center p-8 group transition-all duration-500
-            ${isPrimary ? 'bg-[#080808] shadow-2xl' : 'bg-[#030303]'}
+            ${isPrimary ? 'bg-[#080808]' : 'bg-[#030303]'}
+            ${isPrimary && !isMobile ? 'shadow-2xl' : ''} 
         `}>
             {/* Link only works if primary to avoid accidental clicks when swiping */}
             <Link to={to} className={`absolute inset-0 z-20 ${!isPrimary ? 'pointer-events-none' : ''}`}></Link>
@@ -215,8 +233,8 @@ function SkillCard({ data, variant }) {
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50"></div>
             <div className={`absolute inset-0 rounded-3xl border ${isPrimary ? 'border-white/10' : 'border-white/5'} pointer-events-none transition-colors duration-500`}></div>
 
-            {/* Volumetric Ray */}
-            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent blur-3xl pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'}`}></div>
+            {/* Volumetric Ray - Render simpler gradient on mobile */}
+            <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-900/10 to-transparent pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'} ${isMobile ? 'blur-xl' : 'blur-3xl'}`}></div>
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center gap-6">
@@ -248,8 +266,8 @@ function SkillCard({ data, variant }) {
                 </div>
             </div>
 
-            {/* Bottom Glow */}
-            <div className={`absolute bottom-[-20%] left-0 right-0 h-[40%] bg-cyan-500/10 blur-[40px] pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'}`}></div>
+            {/* Bottom Glow - Simplified on mobile */}
+            <div className={`absolute bottom-[-20%] left-0 right-0 h-[40%] bg-cyan-500/10 pointer-events-none transition-opacity duration-500 ${isPrimary ? 'opacity-100' : 'opacity-0'} ${isMobile ? 'blur-2xl' : 'blur-[40px]'}`}></div>
         </div>
     );
 }
