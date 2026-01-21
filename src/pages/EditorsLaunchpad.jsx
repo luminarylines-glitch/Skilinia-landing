@@ -81,8 +81,24 @@ function EditorsLaunchpad() {
 
     // Initialize Wistia API & Urgency Logic
     useEffect(() => {
-        // Wistia "Watch Queue" Pattern (_wq is the correct queue for onReady)
+        // Wistia "Watch Queue" Pattern
         window._wq = window._wq || [];
+
+        // Tally Submission Tracking
+        const handleTallySubmit = (e) => {
+            // Check for Tally event string (e.data can be a string or object depending on version)
+            const isTallySubmit =
+                (typeof e.data === 'string' && e.data.includes('Tally.FormSubmitted')) ||
+                (typeof e.data === 'object' && e.data?.event === 'Tally.FormSubmitted');
+
+            if (isTallySubmit) {
+                console.log("✅ Tally Form Submitted! Tracking 'Lead' event.");
+                if (typeof window.fbq === 'function') {
+                    window.fbq('track', 'Lead');
+                }
+            }
+        };
+        window.addEventListener('message', handleTallySubmit);
 
         const onWistiaReady = (video) => {
             console.log("Wistia Player Ready:", video);
@@ -106,7 +122,6 @@ function EditorsLaunchpad() {
                 const duration = video.duration();
                 if (!duration) return;
 
-                // Randomize triggers slightly (simulated by broad ranges)
                 // Mid-video reduction (approx 50%)
                 if (s / duration > 0.45 && !midReduced) {
                     setSlotsLeft(prev => Math.max(14, prev - 1));
@@ -125,11 +140,11 @@ function EditorsLaunchpad() {
             });
         };
 
-        // Use _wq, not _wistia for ID-based callbacks
+        // Use _wq for ID-based callbacks
         window._wq.push({ id: WISTIA_VIDEO_ID, onReady: onWistiaReady });
 
         return () => {
-            // Cleanup
+            window.removeEventListener('message', handleTallySubmit);
         };
     }, []);
 
