@@ -30,15 +30,10 @@ function EditorsLaunchpad() {
     const [isVideoFinished, setIsVideoFinished] = useState(false);
     const [isUnlocked, setIsUnlocked] = useState(false);
 
-    // Onboarding State
-    const [hasOnboarded, setHasOnboarded] = useState(() => {
-        if (typeof window === 'undefined') return true;
-        return localStorage.getItem('skilinia_onboarded') === 'true';
-    });
+
 
     const step1Controls = useAnimation();
     const step2Controls = useAnimation();
-    const step2Ref = useRef(null);
 
     // Testimonials Data
     const testimonials = [
@@ -81,73 +76,7 @@ function EditorsLaunchpad() {
         return () => clearInterval(interval);
     }, []);
 
-    // Helper: Precision Smooth Scroll
-    const smoothScrollTo = (element, duration) => {
-        const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2) + (element.offsetHeight / 2); // Center element
-        const startPosition = window.pageYOffset;
-        const distance = targetPosition - startPosition;
-        let startTime = null;
 
-        const animation = (currentTime) => {
-            if (startTime === null) startTime = currentTime;
-            const timeElapsed = currentTime - startTime;
-            const run = ease(timeElapsed, startPosition, distance, duration);
-            window.scrollTo(0, run);
-            if (timeElapsed < duration) requestAnimationFrame(animation);
-        };
-
-        const ease = (t, b, c, d) => {
-            t /= d / 2;
-            if (t < 1) return c / 2 * t * t + b;
-            t--;
-            return -c / 2 * (t * (t - 2) - 1) + b;
-        };
-
-        requestAnimationFrame(animation);
-    };
-
-    // Onboarding Sequence
-    useEffect(() => {
-        if (hasOnboarded) return;
-
-        const runSequence = async () => {
-            // 1. Initial Wait
-            await new Promise(r => setTimeout(r, 500));
-
-            // 2. Pulse Step 1
-            await step1Controls.start({
-                opacity: [0.8, 1, 0.8],
-                scale: [1, 1.05, 1],
-                textShadow: ["0px 0px 0px rgba(255,255,255,0)", "0px 0px 10px rgba(255,255,255,0.5)", "0px 0px 0px rgba(255,255,255,0)"],
-                transition: { duration: 0.7 }
-            });
-
-            // 3. Wait before scroll
-            await new Promise(r => setTimeout(r, 200));
-
-            // 4. Scroll to Step 2
-            if (step2Ref.current) {
-                smoothScrollTo(step2Ref.current, 500);
-            }
-
-            // 5. Wait for scroll to complete
-            await new Promise(r => setTimeout(r, 600));
-
-            // 6. Pulse Step 2
-            await step2Controls.start({
-                opacity: [1, 0.6, 1], // Inverted pulse for white text
-                scale: [1, 1.05, 1],
-                textShadow: ["0px 0px 0px rgba(255,255,255,0)", "0px 0px 15px rgba(255,255,255,0.6)", "0px 0px 0px rgba(255,255,255,0)"],
-                transition: { duration: 0.7 }
-            });
-
-            // 7. Finish
-            localStorage.setItem('skilinia_onboarded', 'true');
-            setHasOnboarded(true);
-        };
-
-        runSequence();
-    }, [hasOnboarded, step1Controls, step2Controls]);
 
 
     // Initialize Wistia API & Urgency Logic
@@ -255,7 +184,7 @@ function EditorsLaunchpad() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative z-20 font-display text-xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white leading-none uppercase drop-shadow-2xl whitespace-nowrap"
+                        className="relative z-20 font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-white leading-none uppercase drop-shadow-2xl whitespace-nowrap"
                     >
                         GET YOUR FIRST PAID CLIENT
                     </motion.h1>
@@ -264,7 +193,7 @@ function EditorsLaunchpad() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="relative z-20 text-gray-400 font-medium text-sm sm:text-base tracking-[0.2em] uppercase max-w-xl mx-auto border-b border-gray-800/50 pb-4 mb-4"
+                    className="relative z-20 text-gray-400 font-medium text-[10px] sm:text-sm tracking-[0.2em] uppercase max-w-xl mx-auto border-b border-gray-800/50 pb-4 mb-4"
                 >
                     Even If You’re Starting From Zero
                 </motion.p>
@@ -346,7 +275,7 @@ function EditorsLaunchpad() {
             </motion.div>
 
             {/* Step Label 2 - Above Button */}
-            <div className="text-center relative z-10 mt-8 sm:mt-10 mb-3" ref={step2Ref}>
+            <div className="text-center relative z-10 mt-8 sm:mt-10 mb-3">
                 <motion.p
                     animate={step2Controls}
                     className="text-gray-200 font-medium text-sm sm:text-base tracking-[0.2em] uppercase"
