@@ -146,7 +146,22 @@ function EditorsLaunchpad() {
             window.fbq('track', 'InitiateCheckout');
         }
 
-        window.location.href = "https://tally.so/r/1A4Z8p";
+        // Open Tally Popup
+        if (typeof window.Tally !== 'undefined') {
+            window.Tally.openPopup('1A4Z8p', {
+                width: 700,
+                hideTitle: true,
+                overlay: true,
+                emoji: {
+                    text: '👋',
+                    animation: 'wave'
+                },
+                autoClose: 0
+            });
+        } else {
+            // Fallback if script hasn't loaded
+            window.location.href = "https://tally.so/r/1A4Z8p";
+        }
     };
 
     // Countdown Logic
