@@ -1,11 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { DollarBill } from '../components/DollarBill';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import VideoMediaCard from '../components/ui/VideoMediaCard';
+import Badge from '../components/ui/Badge';
+import PreQualificationQuiz from '../components/PreQualificationQuiz';
+import CountdownBanner from '../components/ui/CountdownBanner';
+import VisualSeatGrid from '../components/ui/VisualSeatGrid';
+import ValueGrid from '../components/ui/ValueGrid';
+import StyleShowcase from '../components/ui/StyleShowcase';
+import PricingComparisonCard from '../components/ui/PricingComparisonCard';
+import ScrollPlayhead from '../components/ui/ScrollPlayhead';
+import KeyframeSection from '../components/ui/KeyframeSection';
+import ExitIntentPopup from '../components/ui/ExitIntentPopup';
+import FormAbandonPopup from '../components/ui/FormAbandonPopup';
+import PostFormPopup from '../components/ui/PostFormPopup';
+import SeatSecuredAnimation from '../components/ui/SeatSecuredAnimation';
+import FloatingReservationTimer from '../components/ui/FloatingReservationTimer';
+import LiveActivityNotifications from '../components/ui/LiveActivityNotifications';
+import ScrollProgressBar from '../components/ui/ScrollProgressBar';
+
 
 // PLACEHOLDERS - USER SHOULD REPLACE THESE
 const WISTIA_VIDEO_ID = "fdjsk7omlt"; // User provided ID
 
-// Safe Storage Helper (Outside Component)
+// Safe Storage Helper
 const safeStorage = {
     getItem: (key) => {
         if (typeof window === 'undefined') return null;
@@ -26,367 +45,1204 @@ const safeStorage = {
     }
 };
 
+// Constants
+const UNLOCK_THRESHOLD = 0.30; // Reduced from 50% to 30% for lead gen optimization
+
+// Cohort Configuration (Dynamic based on current date)
+const getCohortInfo = () => {
+    const now = new Date();
+    // Next cohort starts on the 15th of next month (or current month if before 15th)
+    let cohortDate = new Date(now.getFullYear(), now.getMonth(), 15);
+    if (now.getDate() >= 10) {
+        cohortDate = new Date(now.getFullYear(), now.getMonth() + 1, 15);
+    }
+
+    const daysUntil = Math.ceil((cohortDate - now) / (1000 * 60 * 60 * 24));
+    const cohortNumber = Math.floor((now.getFullYear() - 2025) * 12 + now.getMonth()) + 1;
+
+    // Simulate spots (in real app, fetch from backend)
+    const totalSpots = 20;
+    const spotsTaken = Math.min(Math.floor(12 + (Math.random() * 4)), totalSpots - 3);
+    const spotsLeft = totalSpots - spotsTaken;
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const formattedDate = `${monthNames[cohortDate.getMonth()]} ${cohortDate.getDate()}, ${cohortDate.getFullYear()}`;
+
+    return {
+        cohortNumber,
+        daysUntil,
+        spotsLeft,
+        totalSpots,
+        formattedDate,
+        percentFilled: (spotsTaken / totalSpots) * 100
+    };
+};
+
+// Analytics Event Tracking Helper
+const trackEvent = (eventName, properties = {}) => {
+    console.log(`[Analytics] ${eventName}`, properties);
+    if (typeof window.fbq === 'function') {
+        window.fbq('trackCustom', eventName, properties);
+    }
+};
+
+// FAQ Data
+const FAQ_DATA = [
+    {
+        id: 'cost',
+        question: "How much does the program cost?",
+        answer: "The program is originally ₹15,000, but currently discounted to ₹5,900. This includes lifetime access, 6 weeks of structured training, portfolio reviews, and community support. Most students make back their investment with their first client."
+    },
+    {
+        id: 'beginner',
+        question: "I'm a complete beginner. Is this for me?",
+        answer: "Yes, if you've edited at least a few videos (even just for fun). We start from fundamentals, but you need to know the basics of your editing software. If you've never opened Premiere or DaVinci, start there first."
+    },
+    {
+        id: 'guarantee',
+        question: "What's your refund policy?",
+        answer: "We offer a 7-day full refund guarantee. Complete Module 1, and if you're not satisfied, get 100% of your money back—no questions asked. We're that confident in our curriculum."
+    },
+    {
+        id: 'time',
+        question: "How much time do I need per week?",
+        answer: "Plan for 8-12 hours weekly: 2-3 hours of lessons, 5-8 hours for projects and client outreach. The more time you invest, the faster you'll see results."
+    },
+    {
+        id: 'refund',
+        question: "Is there a refund policy?",
+        answer: "Yes. Full refund within 7 days if you complete week 1 modules and decide it's not for you. No questions asked."
+    },
+    {
+        id: 'software',
+        question: "What software do I need?",
+        answer: "Any NLE works: Premiere Pro, DaVinci Resolve (free version is fine), Final Cut Pro, or even CapCut. We teach principles and client acquisition, not which buttons to click."
+    }
+];
+
+// Testimonials with more detail
+const TESTIMONIALS = [
+    {
+        text: "Landed my first ₹15,000 client in 3 weeks. The outreach templates alone were worth the investment.",
+        name: "Arjun B",
+        city: "Kochi",
+        before: "Complete beginner",
+        avatar: "A",
+        image: "/images/testimonials/arjun.jpg",
+        result: "₹15K first client",
+        timeframe: "3 weeks"
+    },
+    {
+        text: "Clear projects, real workflows, no fluff. This is what YouTube tutorials can't teach you.",
+        name: "Akash M V",
+        city: "Calicut",
+        before: "YouTube tutorial watcher",
+        avatar: "A",
+        image: "/images/testimonials/akash.jpg",
+        result: "3 retainer clients",
+        timeframe: "6 weeks"
+    },
+    {
+        text: "Went from zero experience to ₹40K/month in 8 weeks. Best decision I made this year.",
+        name: "Sivajith",
+        city: "Trivandrum",
+        before: "College student",
+        avatar: "S",
+        image: "/images/testimonials/sivajith.jpg",
+        result: "₹40K/month",
+        timeframe: "8 weeks"
+    },
+    {
+        text: "Finally understood how to price and sell my work. Stopped undercharging overnight.",
+        name: "Priya K",
+        city: "Bangalore",
+        before: "Hobbyist editor",
+        avatar: "P",
+        image: "/images/testimonials/priya.jpg",
+        result: "3x pricing increase",
+        timeframe: "Week 2"
+    },
+    {
+        text: "The client acquisition module changed everything. Now I have more leads than I can handle.",
+        name: "Rahul M",
+        city: "Mumbai",
+        before: "Freelancer stuck at ₹5K/project",
+        avatar: "R",
+        image: "/images/testimonials/rahul.jpg",
+        result: "₹25K/project avg",
+        timeframe: "5 weeks"
+    },
+    {
+        text: "Got my first international client from the UK. Getting paid in dollars now!",
+        name: "Sneha V",
+        city: "Chennai",
+        before: "Local wedding videographer",
+        avatar: "S",
+        image: "/images/testimonials/sneha.jpg",
+        result: "$500 USD client",
+        timeframe: "7 weeks"
+    },
+    {
+        text: "Quit my IT job. Editing full-time now and earning more than my old salary.",
+        name: "Vikram S",
+        city: "Pune",
+        before: "Software developer",
+        avatar: "V",
+        image: "/images/testimonials/vikram.jpg",
+        result: "₹80K/month",
+        timeframe: "3 months"
+    },
+    {
+        text: "The portfolio feedback sessions were invaluable. Completely transformed my showreel.",
+        name: "Kavitha R",
+        city: "Hyderabad",
+        before: "YouTube content creator",
+        avatar: "K",
+        image: "/images/testimonials/kavitha.jpg",
+        result: "5 agency contracts",
+        timeframe: "6 weeks"
+    }
+];
+
+// FAQ Accordion Item Component
+function FAQItem({ item, isOpen, onClick }) {
+    return (
+        <div className="border-b border-white/5 last:border-0">
+            <button
+                onClick={onClick}
+                className="w-full py-6 flex items-center justify-between text-left group"
+            >
+                <span className={`font-medium transition-colors ${isOpen ? 'text-emerald-400' : 'text-gray-300 group-hover:text-white'}`}>
+                    {item.question}
+                </span>
+                <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-gray-500 ml-4 flex-shrink-0"
+                >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </motion.span>
+            </button>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                    >
+                        <p className="pb-6 text-gray-400 text-sm leading-relaxed max-w-2xl">
+                            {item.answer}
+                        </p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}
+
 function EditorsLaunchpad() {
-    const [isVideoFinished, setIsVideoFinished] = useState(false);
+    // States
+    const [quizCompleted, setQuizCompleted] = useState(false);
+    const [isQualified, setIsQualified] = useState(null);
+    const [qualificationTier, setQualificationTier] = useState(null);
     const [isUnlocked, setIsUnlocked] = useState(false);
+    const [videoProgress, setVideoProgress] = useState(0);
+    const [showStickyCTA, setShowStickyCTA] = useState(false);
+    const [stickyDismissed, setStickyDismissed] = useState(false);
+    const [openFAQ, setOpenFAQ] = useState(null);
+    const [currentTestimonial, setCurrentTestimonial] = useState(0);
+    const [cohortInfo, setCohortInfo] = useState(getCohortInfo());
+    const [liveViewers, setLiveViewers] = useState(23);
+    const [timeLeft, setTimeLeft] = useState({
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    });
+    const [showPostFormPopup, setShowPostFormPopup] = useState(false);
+    const [showAbandonPopup, setShowAbandonPopup] = useState(false);
+    const [showSeatAnimation, setShowSeatAnimation] = useState(false);
+    const [tallyFormOpened, setTallyFormOpened] = useState(false);
+    const [tallyFormSubmitted, setTallyFormSubmitted] = useState(false);
+    const [userSeatSecured, setUserSeatSecured] = useState(false); // Track if user secured their spot
+
+    // Computed spotsLeft that accounts for user's secured spot
+    const effectiveSpotsLeft = userSeatSecured ? Math.max(cohortInfo.spotsLeft - 1, 1) : cohortInfo.spotsLeft;
+    const effectiveTakenSpots = userSeatSecured ? (cohortInfo.totalSpots - cohortInfo.spotsLeft + 1) : (cohortInfo.totalSpots - cohortInfo.spotsLeft);
 
 
+    const videoSectionRef = useRef(null);
 
-    const step1Controls = useAnimation();
-    const step2Controls = useAnimation();
-
-    // Testimonials Data
-    const testimonials = [
-        { text: "Within weeks, I delivered my first paid reel.", name: "Arjun B", city: "Kochi" },
-        { text: "Clear projects, real workflows, no fluff.", name: "Akash M V", city: "Calicut" },
-        { text: "Perfect for complete beginners like me.", name: "Sivajith", city: "Trivandrum" }
-    ];
-
-    // State for Slots & Urgency
-    const [slotsLeft, setSlotsLeft] = useState(16);
-    const [showSlotNotification, setShowSlotNotification] = useState(false);
-
-    // Load slots from storage on mount
+    // Skip quiz for returning users
     useEffect(() => {
-        const saved = safeStorage.getItem('skilinia_slots_left');
-        if (saved) {
-            const parsed = parseInt(saved, 10);
-            if (Number.isFinite(parsed)) {
-                setSlotsLeft(parsed);
-            }
+        const quizDone = safeStorage.getItem('skilinia_quiz_completed');
+        if (quizDone === 'true') {
+            setQuizCompleted(true);
+            setIsQualified(true);
         }
     }, []);
 
-    // Timer State
-    const [timeLeft, setTimeLeft] = useState("06:12:43");
-
-    // Persist slots
-    useEffect(() => {
-        safeStorage.setItem('skilinia_slots_left', slotsLeft.toString());
-    }, [slotsLeft]);
-
-    // Carousel State
-    const [currentTestimonial, setCurrentTestimonial] = useState(0);
-
-    // Carousel Auto-Scroll
+    // Testimonial carousel - 7 seconds for better readability
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-        }, 4000); // 4 seconds per slide
+            setCurrentTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+        }, 7000);
         return () => clearInterval(interval);
     }, []);
 
-
-
-
-    // Initialize Wistia API & Urgency Logic
+    // Countdown Timer until cohort starts
     useEffect(() => {
-        // Wistia "Watch Queue" Pattern
+        const calculateTimeLeft = () => {
+            const cohortDate = new Date(cohortInfo.formattedDate);
+            const now = new Date();
+            const difference = cohortDate - now;
+
+            if (difference > 0) {
+                return {
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60)
+                };
+            }
+            return { hours: 0, minutes: 0, seconds: 0 };
+        };
+
+        setTimeLeft(calculateTimeLeft());
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [cohortInfo.formattedDate]);
+
+    // Live viewers simulation for FOMO
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // Fluctuate between 18-32 viewers
+            setLiveViewers(prev => {
+                const change = Math.random() > 0.5 ? 1 : -1;
+                const newCount = prev + change;
+                return Math.max(18, Math.min(32, newCount));
+            });
+        }, 4000 + Math.random() * 3000); // Random interval 4-7 seconds
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // Sticky CTA visibility
+    useEffect(() => {
+        if (!quizCompleted) return;
+
+        const handleScroll = () => {
+            if (stickyDismissed) return;
+            const videoSection = videoSectionRef.current;
+            if (!videoSection) return;
+
+            const rect = videoSection.getBoundingClientRect();
+            const scrolledPastVideo = rect.bottom < window.innerHeight * 0.3;
+            setShowStickyCTA(scrolledPastVideo);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [quizCompleted, stickyDismissed]);
+
+    // Initialize Wistia
+    useEffect(() => {
+        if (!quizCompleted) return;
+
         window._wq = window._wq || [];
 
         // Tally Submission Tracking
         const handleTallySubmit = (e) => {
-            // Check for Tally event string (e.data can be a string or object depending on version)
             const isTallySubmit =
                 (typeof e.data === 'string' && e.data.includes('Tally.FormSubmitted')) ||
                 (typeof e.data === 'object' && e.data?.event === 'Tally.FormSubmitted');
 
             if (isTallySubmit) {
                 console.log("✅ Tally Form Submitted! Tracking 'Lead' event.");
+                // Mark as submitted IMMEDIATELY to prevent abandon popup
+                setTallyFormSubmitted(true);
+                sessionStorage.setItem('tally_submitted', 'true');
+
                 if (typeof window.fbq === 'function') {
                     window.fbq('track', 'Lead');
                 }
+                // Show post-form popup after small delay
+                setTimeout(() => {
+                    setShowPostFormPopup(true);
+                }, 500);
             }
         };
         window.addEventListener('message', handleTallySubmit);
 
         const onWistiaReady = (video) => {
-            console.log("Wistia Player Ready:", video);
-
-            // Urgency Logic Vars
-            let midReduced = safeStorage.getItem('skilinia_slots_reduced_mid') === 'true';
-            let endReduced = safeStorage.getItem('skilinia_slots_reduced_end') === 'true';
-
             video.bind("end", () => {
-                console.log("Video ended event received!");
-                setIsVideoFinished(true);
+                setVideoProgress(1);
                 setIsUnlocked(true);
             });
 
             video.bind("play", () => {
-                console.log("Video started playing");
+                trackEvent('video_play_start', { qualified_tier: qualificationTier });
             });
 
-            // Realistic Slot Reduction Logic
+            let trackedMilestones = { 25: false, 50: false, 75: false, 100: false };
+
             video.bind("secondchange", (s) => {
                 const duration = video.duration();
                 if (!duration) return;
 
-                // Mid-video reduction (approx 50%)
-                if (s / duration > 0.45 && !midReduced) {
-                    setSlotsLeft(prev => Math.max(14, prev - 1));
-                    midReduced = true;
-                    safeStorage.setItem('skilinia_slots_reduced_mid', 'true');
-                    triggerNotification();
+                const progress = s / duration;
+                setVideoProgress(progress);
+
+                const percent = Math.round(progress * 100);
+                if (percent >= 25 && !trackedMilestones[25]) {
+                    trackEvent('video_progress', { percent: 25 });
+                    trackedMilestones[25] = true;
+                }
+                if (percent >= 50 && !trackedMilestones[50]) {
+                    trackEvent('video_progress', { percent: 50 });
+                    trackedMilestones[50] = true;
+                }
+                if (percent >= 75 && !trackedMilestones[75]) {
+                    trackEvent('video_progress', { percent: 75 });
+                    trackedMilestones[75] = true;
                 }
 
-                // End-video reduction (approx 90%)
-                if (s / duration > 0.90 && !endReduced) {
-                    setSlotsLeft(prev => Math.max(14, prev - 1));
-                    endReduced = true;
-                    safeStorage.setItem('skilinia_slots_reduced_end', 'true');
-                    triggerNotification();
+                // Unlock at threshold
+                if (progress >= UNLOCK_THRESHOLD && !isUnlocked) {
+                    setIsUnlocked(true);
+                    trackEvent('cta_unlocked', { percent: Math.round(progress * 100) });
                 }
             });
         };
 
-        // Use _wq for ID-based callbacks
         window._wq.push({ id: WISTIA_VIDEO_ID, onReady: onWistiaReady });
 
         return () => {
             window.removeEventListener('message', handleTallySubmit);
         };
-    }, []);
+    }, [quizCompleted, isUnlocked, qualificationTier]);
 
-    const triggerNotification = () => {
-        setShowSlotNotification(true);
-        setTimeout(() => setShowSlotNotification(false), 2000);
+    // Handlers
+    const handleQuizComplete = (qualified, tier, answers) => {
+        setIsQualified(qualified);
+        setQualificationTier(tier);
+        setQuizCompleted(true);
+        safeStorage.setItem('skilinia_quiz_completed', 'true');
+        safeStorage.setItem('skilinia_qualification_tier', tier);
+
+        trackEvent('quiz_completed', { qualified, tier });
+
+        // If qualified, also immediately unlock CTA for high-tier users
+        if (tier === 'high') {
+            setIsUnlocked(true);
+        }
     };
 
-    const handleContinue = () => {
-        if (!isUnlocked) return;
+    const scrollToVideo = () => {
+        videoSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
 
-        // Meta Pixel Event
+    const handleApply = () => {
+        trackEvent('cta_click', {
+            video_percent_watched: Math.round(videoProgress * 100),
+            qualification_tier: qualificationTier,
+            source: 'main_cta'
+        });
+
         if (typeof window.fbq === 'function') {
             window.fbq('track', 'InitiateCheckout');
         }
 
-        // Open Tally Popup
+        // Show seat secured animation first!
+        setShowSeatAnimation(true);
+    };
+
+    // Opens Tally form after animation completes
+    const openTallyForm = () => {
+        setShowSeatAnimation(false);
+        setUserSeatSecured(true); // Mark user's spot as secured - updates all indicators
+
         if (typeof window.Tally !== 'undefined') {
+            setTallyFormOpened(true);
+            setTallyFormSubmitted(false);
+
             window.Tally.openPopup('1A4Z8p', {
                 layout: 'modal',
                 align: 'center',
                 width: 700,
                 hideTitle: true,
                 overlay: true,
-                autoClose: 0
+                autoClose: 0,
+                onClose: () => {
+                    // Only show abandon popup if form wasn't submitted
+                    if (!tallyFormSubmitted && !sessionStorage.getItem('tally_submitted')) {
+                        // Small delay to ensure submit event processed first
+                        setTimeout(() => {
+                            if (!sessionStorage.getItem('tally_submitted')) {
+                                setShowAbandonPopup(true);
+                                trackEvent('form_abandoned');
+                            }
+                        }, 300);
+                    }
+                    setTallyFormOpened(false);
+                }
             });
         } else {
-            // Fallback if script hasn't loaded
             window.location.href = "https://tally.so/r/1A4Z8p";
         }
     };
 
-    // Countdown Logic
-    useEffect(() => {
-        // Set initial time: 6h 12m 43s
-        let totalSeconds = 6 * 3600 + 12 * 60 + 43;
+    const dismissStickyCTA = () => {
+        setStickyDismissed(true);
+        setShowStickyCTA(false);
+    };
 
-        const timer = setInterval(() => {
-            totalSeconds -= 1;
-            if (totalSeconds < 0) {
-                clearInterval(timer);
-                return;
-            }
+    // Pre-Qualification Screen
+    if (!quizCompleted) {
+        return (
+            <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#0a0a0a] to-black relative flex flex-col items-center justify-center py-12 px-4 font-sans selection:bg-[#d4ff00]/30 selection:text-black overflow-hidden">
+                {/* Background effects */}
+                <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#d4ff00]/5 rounded-full blur-[100px] pointer-events-none"></div>
 
-            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (totalSeconds % 60).toString().padStart(2, '0');
+                {/* Logo */}
+                <div className="relative z-10 mb-8">
+                    <img src="/logo.png" alt="Skilinia Logo" className="h-12 w-auto object-contain drop-shadow-lg" />
+                </div>
 
-            setTimeLeft(`${h}:${m}:${s}`);
-        }, 1000);
+                {/* Intro Text */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mb-8 relative z-10"
+                >
+                    <h1 className="text-2xl sm:text-4xl font-bold text-white mb-3">
+                        Before we begin...
+                    </h1>
+                    <p className="text-gray-400 text-sm sm:text-base max-w-md mx-auto">
+                        Answer 5 quick questions so we can personalize your experience
+                    </p>
+                </motion.div>
 
-        return () => clearInterval(timer);
-    }, []);
+                {/* Quiz */}
+                <PreQualificationQuiz onComplete={handleQuizComplete} />
+            </div >
+        );
+    }
 
+    // Main Landing Page (After Quiz)
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#0a0a0a] to-black relative flex flex-col items-center pt-10 pb-20 px-4 sm:px-6 lg:px-8 font-sans selection:bg-emerald-600 selection:text-white overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#0a0a0a] to-black relative flex flex-col items-center pt-8 pb-32 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#d4ff00]/30 selection:text-black overflow-hidden">
+
+            {/* COUNTDOWN BANNER - PINK GRADIENT */}
+            <CountdownBanner
+                targetDate={cohortInfo.formattedDate}
+                spotsLeft={effectiveSpotsLeft}
+            />
 
             {/* Cinematic Noise Overlay */}
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
 
-            {/* 0. Logo - Centered Top */}
-            <div className="relative z-10 mb-6">
-                <img src="/logo.png" alt="Skilinia Logo" className="h-16 w-auto object-contain drop-shadow-lg" />
+            {/* Timeline Scrubbing Playhead */}
+            <ScrollPlayhead />
+
+            {/* 0. Logo */}
+            <div className="relative z-10 mb-4">
+                <img src="/logo.png" alt="Skilinia Logo" className="h-14 w-auto object-contain drop-shadow-lg" />
             </div>
 
-            {/* 1. Main Headline - Smaller & Balanced (Now Top) */}
-            <div className="relative z-10 text-center w-full max-w-7xl mx-auto mb-6 space-y-4">
-                <div className="relative inline-block">
-                    <DollarBill />
-                    <motion.h1
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative z-20 font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tighter text-white leading-none uppercase drop-shadow-2xl whitespace-nowrap"
-                    >
-                        GET YOUR FIRST PAID CLIENT
-                    </motion.h1>
-                </div>
+            {/* Qualification Badge */}
+            {qualificationTier && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="relative z-10 mb-8"
+                >
+                    <Badge variant={qualificationTier === 'high' ? 'emerald' : qualificationTier === 'medium' ? 'warning' : 'neutral'}>
+                        <span className="mr-2">
+                            {qualificationTier === 'high' ? '⭐' : qualificationTier === 'medium' ? '👍' : '📚'}
+                        </span>
+                        {qualificationTier === 'high'
+                            ? "You're an excellent fit"
+                            : qualificationTier === 'medium'
+                                ? "You could be a good fit"
+                                : "Consider building basics first"}
+                    </Badge>
+                </motion.div>
+            )}
+
+            {/* 1. Hero Section */}
+            <div className="relative z-10 text-center w-full max-w-4xl mx-auto mb-16 space-y-10">
+                {/* Main Headline - HIGH CONVERSION STYLE */}
+                <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="font-display text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white leading-[1.05] uppercase"
+                >
+                    MASTER THE{' '}
+                    <br />
+                    <span className="font-serif-display italic text-white normal-case text-5xl sm:text-7xl md:text-8xl font-light">
+                        Viral Editing Styles
+                    </span>
+                    <br />
+                    {/* BACKUP: Realistic Marker Circle Implementation
+                    <span className="relative inline-block px-4 py-1.5 mt-2 transform -rotate-2">
+                        <svg className="absolute inset-0 w-full h-full text-[#d4ff00] z-0 pointer-events-none" viewBox="0 0 380 90" preserveAspectRatio="none">
+                            <defs>
+                                <filter id="marker-roughness">
+                                    <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+                                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+                                </filter>
+                            </defs>
+
+                            <path
+                                d="M20,35 Q180,5 360,25 C390,35 385,55 350,75 C290,100 90,95 30,75 C5,60 5,35 40,25 C140,10 300,15 340,35"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                filter="url(#marker-roughness)"
+                                className="opacity-90"
+                            />
+                        </svg>
+
+                        <span className="relative z-10 font-marker text-2xl md:text-3xl normal-case font-bold text-white drop-shadow-md">
+                            brands and creators pay lakhs for
+                        </span>
+                    </span>
+                    */}
+                    <span className="text-xl md:text-2xl text-[#d4ff00] normal-case font-medium">
+                        brands and creators pay lakhs for
+                    </span>
+                </motion.h1>
+
+                {/* Subheadline */}
                 <motion.p
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    className="relative z-20 text-gray-400 font-medium text-[10px] sm:text-sm tracking-[0.2em] uppercase max-w-xl mx-auto border-b border-gray-800/50 pb-4 mb-4"
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="text-gray-400 text-lg sm:text-xl max-w-xl mx-auto font-light leading-relaxed"
                 >
-                    Even If You’re Starting From Zero
+                    The editing skills that get you hired—and paid premium rates.
                 </motion.p>
-            </div>
 
-            {/* 2. Urgency Badge - Red, Timer (Now Middle) */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="relative z-10 mb-6 flex flex-col items-center gap-4"
-            >
-                <div className="relative">
-                    <div className="bg-[#18181b] backdrop-blur-md border border-[#E53935] text-gray-100 px-6 py-3 sm:px-14 sm:py-5 rounded-full text-xs sm:text-sm font-medium flex items-center justify-center gap-2 sm:gap-3 shadow-[0_0_30px_rgba(229,57,53,0.2)] animate-breathe-red tracking-wide max-w-[90vw] sm:max-w-none mx-auto transition-all duration-300">
-                        <span className="text-[#E53935] text-[10px] sm:text-xs">●</span>
-                        <span className="uppercase text-[10px] sm:text-[13px] font-semibold opacity-95 whitespace-nowrap flex items-center">
-                            <span className="font-mono tracking-wider sm:tracking-widest mr-1 sm:mr-2">{timeLeft}</span>
-                            <span className="mx-1 sm:mx-2 opacity-40">•</span>
-                            <motion.span
-                                key={slotsLeft}
-                                initial={{ scale: 0.8, color: '#ffaaaa' }}
-                                animate={{ scale: 1, color: '#E53935' }}
-                                transition={{ duration: 0.3 }}
-                                className="text-[#E53935] font-bold"
-                            >
-                                {slotsLeft} DISCOUNTED SPOTS
-                            </motion.span>
-                        </span>
+                {/* Unified Status Hub - Minimalist Container */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className="w-full max-w-sm mx-auto bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-2xl space-y-4"
+                >
+                    {/* Top Row: Live Context */}
+                    <div className="flex items-center justify-between text-xs font-medium text-gray-400 px-1">
+                        <div className="flex items-center gap-1.5">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span>{liveViewers} people viewing</span>
+                        </div>
+                        <span className="text-red-400 animate-pulse font-semibold">{effectiveSpotsLeft} spots left</span>
                     </div>
 
-                    {/* Visual Feedback Pop */}
-                    <AnimatePresence>
-                        {showSlotNotification && (
-                            <motion.div
-                                initial={{ opacity: 0, y: 5 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -5 }}
-                                className="absolute -bottom-6 left-0 right-0 text-center"
-                            >
-                                <span className="text-[9px] font-bold uppercase tracking-widest text-red-400/80">
-                                    1 spot just filled
-                                </span>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
-            </motion.div>
+                    {/* Middle: Visual Scarcity (The Dots) */}
+                    <div className="py-1">
+                        <VisualSeatGrid
+                            totalSeats={cohortInfo.totalSpots}
+                            takenSeats={effectiveTakenSpots}
+                            className="mx-auto"
+                        />
+                    </div>
 
-            {/* Step Label 1 - Minimalist & Clean */}
-            <div className="text-center relative z-10 mb-4 sm:mb-6">
-                <motion.p
-                    animate={step1Controls}
-                    className="text-gray-400 font-medium text-xs sm:text-sm tracking-[0.2em] uppercase opacity-80"
-                >
-                    Step 1 — Watch the video
-                </motion.p>
-            </div>
-
-            {/* 3. Wistia VSL Embed - Cinematic Shadow */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-                className="w-full max-w-5xl relative z-10 group"
-            >
-                {/* Soft glow behind video */}
-                <div className="absolute -inset-1 bg-[#01663D] rounded-[2rem] blur-[50px] opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-
-                <div className="relative rounded-2xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,1)] bg-[#050505] border border-gray-800/50">
-                    <div className="wistia_responsive_padding" style={{ padding: '56.25% 0 0 0', position: 'relative' }}>
-                        <div className="wistia_responsive_wrapper" style={{ height: '100%', left: 0, position: 'absolute', top: 0, width: '100%' }}>
-                            <div className={`wistia_embed wistia_async_${WISTIA_VIDEO_ID} videoFoam=true`} style={{ height: '100%', position: 'relative', width: '100%' }}>
-                                <div className="wistia_swatch" style={{ height: '100%', left: 0, opacity: 0, overflow: 'hidden', position: 'absolute', top: 0, transition: 'opacity 200ms', width: '100%' }}>
-                                    <img src={`https://fast.wistia.com/embed/medias/${WISTIA_VIDEO_ID}/swatch`} style={{ filter: 'blur(5px)', height: '100%', objectFit: 'contain', width: '100%' }} alt="" aria-hidden="true" onLoad={(e) => e.target.parentNode.style.opacity = 1} />
-                                </div>
-                            </div>
+                    {/* Bottom: Pricing Only (Timer moved to top banner) */}
+                    <div className="border-t border-white/5 pt-3 flex flex-col items-center gap-2 px-1">
+                        <div className="flex items-baseline gap-3">
+                            <span className="text-2xl font-bold text-white">₹5,900</span>
+                            <span className="text-sm text-gray-600 line-through">₹15,000</span>
+                            <span className="text-xs text-emerald-400 font-semibold">61% OFF</span>
+                        </div>
+                        {/* Bonus Value Badge */}
+                        <div className="flex items-center gap-1.5 text-xs">
+                            <span className="text-[#d4ff00]">🎁</span>
+                            <span className="text-gray-400">+ Bonus Pack worth</span>
+                            <span className="text-[#d4ff00] font-bold">₹18,000+</span>
+                            <span className="text-gray-500">FREE</span>
                         </div>
                     </div>
-                </div>
-            </motion.div>
+                </motion.div>
 
-            {/* Step Label 2 - Above Button */}
-            <div className="text-center relative z-10 mt-8 sm:mt-10 mb-3">
-                <motion.p
-                    animate={step2Controls}
-                    className="text-gray-200 font-medium text-sm sm:text-base tracking-[0.2em] uppercase"
+                {/* Hero CTAs */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
                 >
-                    Step 2 — Apply now
-                </motion.p>
+                    <Button
+                        onClick={handleApply}
+                        variant="premium"
+                        className="text-sm sm:text-lg font-extrabold px-6 sm:px-10 py-3 uppercase tracking-wide"
+                        showViewers={true}
+                        viewerCount={cohortInfo.viewerCount || 23}
+                    >
+                        <span className="hidden sm:inline">🔒 Secure ₹5,900 Spot ({effectiveSpotsLeft} Left)</span>
+                        <span className="sm:hidden">🔒 Get ₹5,900 Spot →</span>
+                    </Button>
+
+                    <Button
+                        onClick={scrollToVideo}
+                        variant="outline"
+                        className="text-sm font-semibold"
+                    >
+                        <span>▶</span> Watch 4-Min Breakdown
+                    </Button>
+                </motion.div>
+
+                {/* Social Proof + Urgency */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-gray-500"
+                >
+                    <span className="flex items-center gap-1 font-semibold text-[#d4ff00]">
+                        🎬 Growing Style Library
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="flex items-center gap-1">
+                        ⭐⭐⭐⭐⭐ 127+ students placed
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span>Next cohort: {cohortInfo.formattedDate} ({cohortInfo.daysUntil} days)</span>
+                </motion.div>
             </div>
 
-            {/* 4. Locked Continue Button - Elegant & Centered */}
+            {/* 2. Media Card (Video) - Moved Up */}
             <motion.div
-                className="relative z-10 group"
-                animate={{ opacity: 1, pointerEvents: 'auto' }}
+                ref={videoSectionRef}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="w-full max-w-5xl relative z-10 mb-16 sm:mb-24 px-2 sm:px-0"
             >
-                {/* Rotating Green Glow - Locked State Only */}
-                {!isUnlocked && (
-                    <div className="absolute -inset-[2px] rounded-lg bg-[conic-gradient(from_var(--shimmer-angle),theme('colors.transparent'),#34d399,theme('colors.transparent'))] opacity-100 blur-[0.5px] animate-spin-slow" style={{ '--shimmer-angle': '0deg' }}></div>
-                )}
+                <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
 
-                <button
-                    onClick={handleContinue}
-                    disabled={!isUnlocked}
-                    className={`
-            relative px-12 py-5 rounded-lg text-sm tracking-[0.15em] font-bold uppercase transition-all duration-700 flex items-center justify-center gap-3 border
-            ${isUnlocked
-                            ? 'bg-[#015231] border-[#2dc47d] text-white hover:bg-[#014026] cursor-pointer shadow-[0_0_40px_rgba(1,102,61,0.4)] hover:shadow-[0_0_60px_rgba(45,196,125,0.4)] transform hover:-translate-y-0.5'
-                            : 'bg-black/90 border-gray-700/50 text-gray-400 cursor-not-allowed shadow-[0_0_15px_rgba(1,102,61,0.1)]'}
-          `}
-                >
-                    {isUnlocked ? (
-                        <>
-                            Continue to Enrollment <span className="text-lg">→</span>
-                        </>
-                    ) : (
-                        <>
-                            <span className="opacity-50 text-lg">🔒</span> Finish Video to Apply
-                        </>
+                {/* Mobile-only CTA below video */}
+                <div className="mt-6 sm:hidden text-center">
+                    {(qualificationTier === 'high' || isUnlocked) && (
+                        <Button
+                            onClick={handleApply}
+                            variant="primary"
+                            className="w-full py-4 text-lg font-semibold shadow-lg shadow-emerald-500/10"
+                        >
+                            Start for ₹5,900
+                        </Button>
                     )}
-                </button>
+                </div>
             </motion.div>
 
-            {/* 5. Testimonial Carousel - Integrated */}
-            <div className="mt-16 w-full max-w-lg mx-auto relative px-4 z-10">
-                <p className="text-center text-[9px] font-bold uppercase tracking-[0.4em] text-gray-600 mb-6 font-sans opacity-60">Elite Alumni Results</p>
-                <div className="relative h-48 sm:h-40">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentTestimonial}
-                            initial={{ opacity: 0, filter: 'blur(4px)' }}
-                            animate={{ opacity: 1, filter: 'blur(0px)' }}
-                            exit={{ opacity: 0, filter: 'blur(4px)' }}
-                            transition={{ duration: 0.8 }}
-                            className="bg-transparent text-center"
+            {/* 4. Proof Strip - Simplified & Vertical on Mobile */}
+            <KeyframeSection variant="scale" className="relative z-10 w-full max-w-4xl mb-24 sm:mb-32">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-0 border-y border-white/5 py-10 divide-y sm:divide-y-0 sm:divide-x divide-white/5 bg-white/[0.02]">
+                    <div className="text-center py-2">
+                        <p className="text-3xl sm:text-4xl font-display font-semibold text-white tracking-tight">127+</p>
+                        <p className="text-sm text-gray-500 font-medium mt-1">Editors Placed</p>
+                    </div>
+                    <div className="text-center py-2">
+                        <p className="text-3xl sm:text-4xl font-display font-semibold text-white tracking-tight">₹15L+</p>
+                        <p className="text-sm text-gray-500 font-medium mt-1">Student Earnings</p>
+                    </div>
+                    <div className="text-center py-2">
+                        <p className="text-3xl sm:text-4xl font-display font-semibold text-white tracking-tight">6 wks</p>
+                        <p className="text-sm text-gray-500 font-medium mt-1">Avg. Time to Client</p>
+                    </div>
+                </div>
+            </KeyframeSection>
+
+            {/* NEW: Style Showcase Section - Visual Previews */}
+            <KeyframeSection variant="slide" className="relative z-10 w-full max-w-6xl mx-auto mb-24 sm:mb-32 px-4">
+                <StyleShowcase />
+            </KeyframeSection>
+
+            {/* NEW: "What Do You Get" Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="relative z-10 w-full max-w-5xl mx-auto mb-24 sm:mb-32 px-4"
+            >
+                <div className="text-center mb-12">
+                    <Badge variant="discount" className="mb-4 text-sm">MAXIMUM VALUE</Badge>
+                    <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight uppercase mb-4">
+                        TRENDING STYLES{' '}
+                        <span className="bg-gradient-to-r from-[#d4ff00] to-[#c3ff00] text-transparent bg-clip-text">YOU'LL MASTER</span>
+                    </h2>
+                    <p className="text-gray-400 text-sm">
+                        Master the editing techniques brands and creators pay lakhs for
+                    </p>
+                </div>
+
+                <ValueGrid />
+            </motion.div>
+
+            {/* NEW: Comparison Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="relative z-10 w-full max-w-4xl mx-auto mb-24 sm:mb-32 px-4"
+            >
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight uppercase mb-4">
+                        SELF-TAUGHT VS{' '}
+                        <span className="bg-gradient-to-r from-[#d4ff00] to-[#c3ff00] text-transparent bg-clip-text">LAUNCHPAD</span>
+                    </h2>
+                    <p className="text-gray-400 text-sm">
+                        Why structured training beats YouTube tutorials
+                    </p>
+                </div>
+
+                <PricingComparisonCard />
+
+                {/* CTA After Comparison */}
+                <div className="text-center mt-12">
+                    <Button
+                        onClick={handleApply}
+                        variant="primary"
+                        className="text-lg font-extrabold px-12 py-5 uppercase"
+                    >
+                        🔒 SECURE MY SPOT → ₹5,900
+                    </Button>
+                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft}/{cohortInfo.totalSpots} spots left • Cohort starts {cohortInfo.formattedDate}</p>
+                </div>
+            </motion.div>
+
+            {/* 5. Main CTA Section */}
+            <div className="relative z-10 mt-10 text-center">
+                {isUnlocked || qualificationTier === 'high' ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-3"
+                    >
+                        <p className="text-emerald-400 text-sm font-medium">✓ You're ready to apply</p>
+                        <Button
+                            onClick={handleApply}
+                            variant="primary"
+                            className="px-12 py-5 text-lg font-bold shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transform hover:-translate-y-1"
                         >
-                            <div className="flex justify-center gap-1 mb-6 text-[#01663D] text-[10px] tracking-widest opacity-80">
-                                {[...Array(5)].map((_, i) => (
-                                    <span key={i}>★</span>
-                                ))}
+                            Apply for ₹5,900 Spot →
+                        </Button>
+                        <p className="text-gray-500 text-xs">Takes 2 minutes • {effectiveSpotsLeft} spots left</p>
+                    </motion.div>
+                ) : (
+                    <div className="space-y-4">
+                        <Button
+                            disabled
+                            variant="secondary"
+                            className="px-12 py-5 text-gray-400 cursor-not-allowed border-dashed"
+                        >
+                            <span className="opacity-60 mr-2">○</span> Watch 2 more minutes to apply...
+                        </Button>
+                        <p className="text-gray-600 text-xs">Application unlocks at 30% ({Math.round(videoProgress * 100)}% watched)</p>
+                    </div>
+                )}
+            </div>
+
+            {/* 5.5 Who This Is For Section - Premium Redesign */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="relative z-10 mt-16 w-full max-w-4xl mx-auto px-4"
+            >
+                <h2 className="text-center text-2xl md:text-3xl font-display font-bold text-white mb-8 tracking-tight">
+                    Is This Right For You?
+                </h2>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                    {/* This Is For You - Yellow Accent */}
+                    <Card className="p-8 bg-[#0f0f0f] border-[#d4ff00]/20 hover:border-[#d4ff00]/40 transition-all group">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center group-hover:bg-[#d4ff00]/20 transition-all">
+                                <svg className="w-5 h-5 text-[#d4ff00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                </svg>
                             </div>
-                            <p className="text-gray-200 font-light text-xl sm:text-2xl leading-relaxed mb-6 tracking-wide font-display uppercase">
-                                "{testimonials[currentTestimonial].text}"
+                            <p className="text-white font-bold text-lg">
+                                This is for you if:
                             </p>
-                            <div>
-                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">{testimonials[currentTestimonial].name} — {testimonials[currentTestimonial].city}</p>
+                        </div>
+                        <ul className="space-y-4 text-sm text-gray-400">
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-[#d4ff00] mt-0.5 font-bold">→</span>
+                                <span className="group-hover/item:text-gray-300 transition-colors">You want to learn VIRAL editing techniques (not just basics)</span>
+                            </li>
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-[#d4ff00] mt-0.5 font-bold">→</span>
+                                <span className="group-hover/item:text-gray-300 transition-colors">You want to master trending styles brands pay lakhs for</span>
+                            </li>
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-[#d4ff00] mt-0.5 font-bold">→</span>
+                                <span className="group-hover/item:text-gray-300 transition-colors">You can commit 10 hrs/week to learn premium techniques</span>
+                            </li>
+                        </ul>
+                    </Card>
+
+                    {/* This Is NOT For You - Minimal Dark */}
+                    <Card className="p-8 bg-[#0a0a0a] border-white/5 hover:border-white/10 transition-all group">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-white/10 transition-all">
+                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                             </div>
-                        </motion.div>
-                    </AnimatePresence>
+                            <p className="text-gray-400 font-bold text-lg">
+                                This is NOT for you if:
+                            </p>
+                        </div>
+                        <ul className="space-y-4 text-sm text-gray-500">
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-gray-600 mt-0.5 font-bold">×</span>
+                                <span className="group-hover/item:text-gray-400 transition-colors">You just want basic cut tutorials</span>
+                            </li>
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-gray-600 mt-0.5 font-bold">×</span>
+                                <span className="group-hover/item:text-gray-400 transition-colors">You're not interested in trending techniques</span>
+                            </li>
+                            <li className="flex items-start gap-3 group/item">
+                                <span className="text-gray-600 mt-0.5 font-bold">×</span>
+                                <span className="group-hover/item:text-gray-400 transition-colors">You want to stick to 2015 editing styles</span>
+                            </li>
+                        </ul>
+                    </Card>
+                </div>
+            </motion.div>
+
+            {/* INSTRUCTOR SECTION REMOVED */}
+
+            {/* 6.5 CURRICULUM PREVIEW - Bento Grid */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="relative z-10 mt-32 w-full max-w-5xl mx-auto px-4"
+            >
+                <div className="text-center mb-12">
+                    <Badge variant="neutral" className="mb-4">The Process</Badge>
+                    <h2 className="text-3xl md:text-4xl font-display font-semibold text-white tracking-tight mb-4">
+                        The 6-Week System
+                    </h2>
+                    <p className="text-center text-gray-400 max-w-xl mx-auto font-light">
+                        From editing skills to paying clients — here's the roadmap
+                    </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                    {/* Week 1-2 */}
+                    <Card className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:bg-white/[0.02] transition-colors group">
+                        <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white font-mono text-sm group-hover:bg-[#d4ff00]/10 group-hover:text-[#d4ff00] transition-colors">01</div>
+                        <div>
+                            <h3 className="text-lg font-bold text-white mb-1 tracking-tight">Foundations & Portfolio</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">Build a client-ready portfolio with real projects. Master the editing workflows pros actually use.</p>
+                        </div>
+                    </Card>
+
+                    {/* Week 3-4 */}
+                    <Card className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:bg-white/[0.02] transition-colors group">
+                        <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white font-mono text-sm group-hover:bg-[#d4ff00]/10 group-hover:text-[#d4ff00] transition-colors">02</div>
+                        <div>
+                            <h3 className="text-lg font-bold text-white mb-1 tracking-tight">Client Acquisition</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">Learn outreach that works. Get templates, scripts, and strategies to land your first paying client.</p>
+                        </div>
+                    </Card>
+
+                    {/* Week 5-6 */}
+                    <Card className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 items-start hover:bg-white/[0.02] transition-colors group">
+                        <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white font-mono text-sm group-hover:bg-[#d4ff00]/10 group-hover:text-[#d4ff00] transition-colors">03</div>
+                        <div>
+                            <h3 className="text-lg font-bold text-white mb-1 tracking-tight">Pricing & Scaling</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed">Price confidently, negotiate well, and build retainer relationships for predictable income.</p>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* What's Included */}
+                <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-400 font-medium">
+                    <span className="flex items-center gap-2"><span className="text-[#d4ff00]">✓</span> Lifetime access</span>
+                    <span className="flex items-center gap-2"><span className="text-[#d4ff00]">✓</span> Portfolio reviews</span>
+                    <span className="flex items-center gap-2"><span className="text-[#d4ff00]">✓</span> Community support</span>
+                    <span className="flex items-center gap-2"><span className="text-[#d4ff00]">✓</span> Outreach templates</span>
+                </div>
+            </motion.div>
+
+            {/* 7. Testimonials - Horizontal Scroll */}
+            <div className="relative z-10 mt-32 w-full max-w-7xl mx-auto px-4 overflow-hidden">
+                <div className="text-center mb-12">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-3">
+                        Student Results
+                    </p>
+                    <h2 className="text-3xl font-display font-semibold text-white tracking-tight">
+                        {TESTIMONIALS.length} Success Stories
+                    </h2>
+                </div>
+
+                <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar px-4">
+                    {TESTIMONIALS.map((testimonial, i) => (
+                        <Card key={i} className="min-w-[300px] md:min-w-[350px] p-6 snap-center bg-[#111] border-white/5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden">
+                                    {testimonial.image ? (
+                                        <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-white bg-emerald-900">{testimonial.avatar}</div>
+                                    )}
+                                </div>
+                                <div>
+                                    <p className="text-white font-medium text-sm">{testimonial.name}</p>
+                                    <p className="text-xs text-gray-500">{testimonial.city}</p>
+                                </div>
+                            </div>
+
+                            {testimonial.result && (
+                                <div className="mb-3">
+                                    <Badge variant="emerald">{testimonial.result}</Badge>
+                                </div>
+                            )}
+
+                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                "{testimonial.text}"
+                            </p>
+
+                            <p className="text-xs text-gray-600 mt-auto">
+                                Was: {testimonial.before} • {testimonial.timeframe}
+                            </p>
+                        </Card>
+                    ))}
                 </div>
             </div>
 
+            {/* CTA After Testimonials */}
+            <div className="relative z-10 mt-12 text-center">
+                <Button
+                    onClick={handleApply}
+                    variant="primary"
+                    className="px-12 py-5 text-lg font-bold"
+                >
+                    Apply for ₹5,900 Spot →
+                </Button>
+                <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Closing {cohortInfo.formattedDate}</p>
+            </div>
 
-            {/* Minimal Footer */}
-            <footer className="mt-12 pb-8 text-center text-gray-700 text-[9px] uppercase tracking-[0.3em] font-medium relative z-10">
-                <p>&copy; {new Date().getFullYear()} Skilinia. Elite Video Editing.</p>
+            {/* What Happens Next Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative z-10 mt-24 w-full max-w-3xl mx-auto px-4"
+            >
+                <div className="text-center mb-10">
+                    <Badge variant="neutral" className="mb-4">Enrollment Process</Badge>
+                    <h2 className="text-2xl md:text-3xl font-display font-semibold text-white tracking-tight">
+                        What Happens After You Apply?
+                    </h2>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                    <Card className="p-6 text-center bg-[#111] border-white/5">
+                        <div className="w-12 h-12 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00] font-bold text-xl mx-auto mb-4">
+                            1
+                        </div>
+                        <h3 className="text-white font-semibold mb-2">Fill Application</h3>
+                        <p className="text-gray-400 text-sm">Quick 2-minute form with your details and goals</p>
+                    </Card>
+
+                    <Card className="p-6 text-center bg-[#111] border-white/5">
+                        <div className="w-12 h-12 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00] font-bold text-xl mx-auto mb-4">
+                            2
+                        </div>
+                        <h3 className="text-white font-semibold mb-2">Get a Call</h3>
+                        <p className="text-gray-400 text-sm">Our team calls you within 24 hours to discuss fit</p>
+                    </Card>
+
+                    <Card className="p-6 text-center bg-[#111] border-white/5">
+                        <div className="w-12 h-12 rounded-full bg-[#d4ff00]/10 border border-[#d4ff00]/30 flex items-center justify-center text-[#d4ff00] font-bold text-xl mx-auto mb-4">
+                            3
+                        </div>
+                        <h3 className="text-white font-semibold mb-2">Secure Your Spot</h3>
+                        <p className="text-gray-400 text-sm">Pay ₹5,900 and join {cohortInfo.formattedDate} cohort</p>
+                    </Card>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-400">
+                    <span className="flex items-center gap-2">
+                        <span className="text-[#d4ff00]">✓</span> 7-Day Money-Back Guarantee
+                    </span>
+                    <span className="flex items-center gap-2">
+                        <span className="text-[#d4ff00]">✓</span> Lifetime Access
+                    </span>
+                    <span className="flex items-center gap-2">
+                        <span className="text-[#d4ff00]">✓</span> Payment Plans Available
+                    </span>
+                </div>
+            </motion.div>
+
+            {/* 8. FAQ Section */}
+            <div className="relative z-10 mt-20 w-full max-w-2xl mx-auto px-4">
+                <h2 className="text-center text-2xl font-display font-bold text-white mb-2">
+                    Questions? We've got answers.
+                </h2>
+                <p className="text-center text-gray-400 text-sm mb-10 font-light">
+                    Everything you need to know before applying
+                </p>
+
+                <Card className="px-2 md:px-6">
+                    {FAQ_DATA.map((item) => (
+                        <FAQItem
+                            key={item.id}
+                            item={item}
+                            isOpen={openFAQ === item.id}
+                            onClick={() => setOpenFAQ(openFAQ === item.id ? null : item.id)}
+                        />
+                    ))}
+                </Card>
+
+                {/* CTA After FAQ */}
+                <div className="mt-12 text-center">
+                    <Button
+                        onClick={handleApply}
+                        variant="primary"
+                        className="px-12 py-5 text-lg font-bold"
+                    >
+                        Apply for ₹5,900 Spot →
+                    </Button>
+                    <p className="text-gray-400 text-xs mt-3">All your questions answered? Let's get started.</p>
+                </div>
+            </div>
+
+            {/* 9. Final CTA */}
+            <div className="relative z-10 mt-32 text-center pb-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="space-y-6"
+                >
+                    <div className="space-y-2">
+                        <p className="text-[#d4ff00] text-sm font-medium uppercase tracking-wider">Last Chance</p>
+                        <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight">
+                            Ready to Land Your First Client?
+                        </h2>
+                        <p className="text-gray-400 max-w-lg mx-auto">
+                            Join 127+ students who turned their editing skills into a career
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={handleApply}
+                        variant="premium"
+                        className="px-8 sm:px-12 py-3 text-sm sm:text-lg font-extrabold uppercase"
+                    >
+                        🔒 SECURE ₹5,900 SPOT — {effectiveSpotsLeft} LEFT
+                    </Button>
+
+                    <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
+                        <span>⏰ Cohort starts {cohortInfo.formattedDate}</span>
+                        <span>•</span>
+                        <span>💰 7-Day Money-Back Guarantee</span>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Footer */}
+            <footer className="relative z-10 mt-16 text-center text-gray-600 text-[10px] uppercase tracking-[0.2em] pb-10">
+                <p>© {new Date().getFullYear()} Skilinia. Elite Video Editing.</p>
             </footer>
 
-        </div>
-    )
+            {/* Sticky Mobile CTA */}
+            <AnimatePresence>
+                {showStickyCTA && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="fixed bottom-0 left-0 right-0 z-50 bg-[#050505]/95 backdrop-blur-xl border-t border-[#d4ff00]/30 safe-area-pb shadow-[0_-10px_40px_rgba(212,255,0,0.15)]"
+                    >
+                        <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                            <div className="hidden sm:block flex-1">
+                                <p className="text-white text-sm font-semibold">₹5,900 Early Bird Spot</p>
+                                <p className="text-[#d4ff00] text-xs font-bold">{effectiveSpotsLeft}/{cohortInfo.totalSpots} spots left • {cohortInfo.daysUntil} days</p>
+                            </div>
+                            <Button
+                                onClick={handleApply}
+                                variant="primary"
+                                className="flex-1 sm:flex-none px-6 py-3 text-sm font-bold"
+                            >
+                                Apply Now — ₹5,900 →
+                            </Button>
+
+                            <button
+                                onClick={dismissStickyCTA}
+                                className="p-2 text-gray-500 hover:text-white transition-colors"
+                                aria-label="Dismiss"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Form Abandon Popup - triggers when user closes form without submitting */}
+            <FormAbandonPopup
+                isVisible={showAbandonPopup}
+                onClose={() => setShowAbandonPopup(false)}
+                onApply={openTallyForm}
+                spotsLeft={effectiveSpotsLeft}
+            />
+
+            {/* Seat Secured Animation - plays before form opens */}
+            <SeatSecuredAnimation
+                isVisible={showSeatAnimation}
+                onComplete={openTallyForm}
+                spotsLeft={effectiveSpotsLeft}
+                totalSpots={cohortInfo.totalSpots}
+            />
+
+            {/* Post-Form Confirmation Popup */}
+            <PostFormPopup
+                isVisible={showPostFormPopup}
+                onClose={() => setShowPostFormPopup(false)}
+                cohortDate={cohortInfo.formattedDate}
+            />
+
+            {/* Floating Timer - shows above Tally form */}
+            <FloatingReservationTimer
+                isVisible={tallyFormOpened}
+                seatNumber={effectiveTakenSpots}
+                initialMinutes={10}
+            />
+
+            {/* Scroll Progress Bar at top of page */}
+            <ScrollProgressBar />
+
+            {/* Live Activity Notifications - social proof toasts */}
+            <LiveActivityNotifications isEnabled={!showSeatAnimation && !tallyFormOpened} />
+        </div >
+    );
 }
 
 export default EditorsLaunchpad;
