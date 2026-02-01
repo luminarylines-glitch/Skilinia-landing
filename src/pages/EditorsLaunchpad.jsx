@@ -246,7 +246,7 @@ function FAQItem({ item, isOpen, onClick }) {
 
 function EditorsLaunchpad() {
     // States
-    const [quizCompleted, setQuizCompleted] = useState(false);
+    const [quizCompleted, setQuizCompleted] = useState(true);
     const [isQualified, setIsQualified] = useState(null);
     const [qualificationTier, setQualificationTier] = useState(null);
     const [isUnlocked, setIsUnlocked] = useState(false);
