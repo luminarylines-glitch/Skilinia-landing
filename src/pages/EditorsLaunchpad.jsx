@@ -128,7 +128,7 @@ const TESTIMONIALS = [
         city: "Kochi",
         before: "Complete beginner",
         avatar: "A",
-        image: "/images/testimonials/arjun.jpg",
+        image: "/images/testimonials/new/test_1.jpg",
         result: "₹15K first client",
         timeframe: "3 weeks"
     },
@@ -138,7 +138,7 @@ const TESTIMONIALS = [
         city: "Calicut",
         before: "YouTube tutorial watcher",
         avatar: "A",
-        image: "/images/testimonials/akash.jpg",
+        image: "/images/testimonials/new/test_2.jpg",
         result: "3 retainer clients",
         timeframe: "6 weeks"
     },
@@ -148,7 +148,7 @@ const TESTIMONIALS = [
         city: "Trivandrum",
         before: "College student",
         avatar: "S",
-        image: "/images/testimonials/sivajith.jpg",
+        image: "/images/testimonials/new/test_3.jpg",
         result: "₹40K/month",
         timeframe: "8 weeks"
     },
@@ -158,7 +158,7 @@ const TESTIMONIALS = [
         city: "Bangalore",
         before: "Hobbyist editor",
         avatar: "P",
-        image: "/images/testimonials/priya.jpg",
+        image: "/images/testimonials/new/test_4.jpg",
         result: "3x pricing increase",
         timeframe: "Week 2"
     },
@@ -168,39 +168,9 @@ const TESTIMONIALS = [
         city: "Mumbai",
         before: "Freelancer stuck at ₹5K/project",
         avatar: "R",
-        image: "/images/testimonials/rahul.jpg",
+        image: "/images/testimonials/new/test_5.png",
         result: "₹25K/project avg",
         timeframe: "5 weeks"
-    },
-    {
-        text: "Got my first international client from the UK. Getting paid in dollars now!",
-        name: "Sneha V",
-        city: "Chennai",
-        before: "Local wedding videographer",
-        avatar: "S",
-        image: "/images/testimonials/sneha.jpg",
-        result: "$500 USD client",
-        timeframe: "7 weeks"
-    },
-    {
-        text: "Quit my IT job. Editing full-time now and earning more than my old salary.",
-        name: "Vikram S",
-        city: "Pune",
-        before: "Software developer",
-        avatar: "V",
-        image: "/images/testimonials/vikram.jpg",
-        result: "₹80K/month",
-        timeframe: "3 months"
-    },
-    {
-        text: "The portfolio feedback sessions were invaluable. Completely transformed my showreel.",
-        name: "Kavitha R",
-        city: "Hyderabad",
-        before: "YouTube content creator",
-        avatar: "K",
-        image: "/images/testimonials/kavitha.jpg",
-        result: "5 agency contracts",
-        timeframe: "6 weeks"
     }
 ];
 
