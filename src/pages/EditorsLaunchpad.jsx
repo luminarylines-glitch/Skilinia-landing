@@ -91,7 +91,7 @@ const FAQ_DATA = [
     {
         id: 'cost',
         question: "How much does the program cost?",
-        answer: "The program is originally ₹15,000, but currently discounted to ₹5,900. This includes lifetime access, 6 weeks of structured training, portfolio reviews, and community support. Most students make back their investment with their first client."
+        answer: "We offer a flexible pricing structure designed to make it accessible for serious learners. Click 'Secure Your Spot' to see the current cohort offer and bonuses."
     },
     {
         id: 'beginner',
@@ -634,9 +634,7 @@ function EditorsLaunchpad() {
                     {/* Bottom: Pricing Only (Timer moved to top banner) */}
                     <div className="border-t border-white/5 pt-3 flex flex-col items-center gap-2 px-1">
                         <div className="flex items-baseline gap-3">
-                            <span className="text-2xl font-bold text-white">₹5,900</span>
-                            <span className="text-sm text-gray-600 line-through">₹15,000</span>
-                            <span className="text-xs text-emerald-400 font-semibold">61% OFF</span>
+                            <span className="text-xl font-bold text-white tracking-wide">LIMITED COHORT OFFER</span>
                         </div>
                         {/* Bonus Value Badge */}
                         <div className="flex items-center gap-1.5 text-xs">
@@ -662,8 +660,8 @@ function EditorsLaunchpad() {
                         showViewers={true}
                         viewerCount={cohortInfo.viewerCount || 23}
                     >
-                        <span className="hidden sm:inline">🔒 Secure ₹5,900 Spot ({effectiveSpotsLeft} Left)</span>
-                        <span className="sm:hidden">🔒 Get ₹5,900 Spot →</span>
+                        <span className="hidden sm:inline">🔒 Secure Your Spot ({effectiveSpotsLeft} Left)</span>
+                        <span className="sm:hidden">🔒 Secure Spot →</span>
                     </Button>
 
                     <Button
@@ -712,7 +710,7 @@ function EditorsLaunchpad() {
                             variant="primary"
                             className="w-full py-4 text-lg font-semibold shadow-lg shadow-emerald-500/10"
                         >
-                            Start for ₹5,900
+                            Start Your Journey
                         </Button>
                     )}
                 </div>
@@ -790,7 +788,7 @@ function EditorsLaunchpad() {
                         variant="primary"
                         className="text-lg font-extrabold px-12 py-5 uppercase"
                     >
-                        🔒 SECURE MY SPOT → ₹5,900
+                        🔒 SECURE MY SPOT
                     </Button>
                     <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft}/{cohortInfo.totalSpots} spots left • Cohort starts {cohortInfo.formattedDate}</p>
                 </div>
@@ -810,7 +808,7 @@ function EditorsLaunchpad() {
                             variant="primary"
                             className="px-12 py-5 text-lg font-bold shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transform hover:-translate-y-1"
                         >
-                            Apply for ₹5,900 Spot →
+                            Apply for Your Spot →
                         </Button>
                         <p className="text-gray-500 text-xs">Takes 2 minutes • {effectiveSpotsLeft} spots left</p>
                     </motion.div>
@@ -1049,7 +1047,7 @@ function EditorsLaunchpad() {
                             3
                         </div>
                         <h3 className="text-white font-semibold mb-2">Secure Your Spot</h3>
-                        <p className="text-gray-400 text-sm">Pay ₹5,900 and join {cohortInfo.formattedDate} cohort</p>
+                        <p className="text-gray-400 text-sm">Secure your spot and join {cohortInfo.formattedDate} cohort</p>
                     </Card>
                 </div>
 
@@ -1123,7 +1121,7 @@ function EditorsLaunchpad() {
                         variant="premium"
                         className="px-8 sm:px-12 py-3 text-sm sm:text-lg font-extrabold uppercase"
                     >
-                        🔒 SECURE ₹5,900 SPOT — {effectiveSpotsLeft} LEFT
+                        🔒 SECURE YOUR SPOT — {effectiveSpotsLeft} LEFT
                     </Button>
 
                     <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
@@ -1151,7 +1149,7 @@ function EditorsLaunchpad() {
                     >
                         <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between gap-3">
                             <div className="hidden sm:block flex-1">
-                                <p className="text-white text-sm font-semibold">₹5,900 Early Bird Spot</p>
+                                <p className="text-white text-sm font-semibold">Early Bird Spot</p>
                                 <p className="text-[#d4ff00] text-xs font-bold">{effectiveSpotsLeft}/{cohortInfo.totalSpots} spots left • {cohortInfo.daysUntil} days</p>
                             </div>
                             <Button
@@ -1159,7 +1157,7 @@ function EditorsLaunchpad() {
                                 variant="primary"
                                 className="flex-1 sm:flex-none px-6 py-3 text-sm font-bold"
                             >
-                                Apply Now — ₹5,900 →
+                                Apply Now →
                             </Button>
 
                             <button

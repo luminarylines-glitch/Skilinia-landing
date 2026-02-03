@@ -47,8 +47,7 @@ export default function PricingComparisonCard({ className = '' }) {
 
                 <h3 className="text-2xl font-bold text-white mb-2 uppercase">Launchpad</h3>
                 <div className="flex items-baseline gap-2 mb-6">
-                    <span className="text-3xl font-extrabold text-[#d4ff00]">₹5,900</span>
-                    <span className="text-sm text-gray-500 line-through">₹15,000</span>
+                    <span className="text-3xl font-extrabold text-[#d4ff00]">LIMITED TIME</span>
                 </div>
 
                 <ul className="space-y-3 mb-6">

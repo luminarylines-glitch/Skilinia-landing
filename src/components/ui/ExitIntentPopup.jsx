@@ -132,7 +132,7 @@ export default function ExitIntentPopup({ onApply, spotsLeft = 6 }) {
                                 onClick={handleApply}
                                 className="w-full py-4 px-6 bg-[#d4ff00] hover:bg-[#e5ff4d] text-black font-bold rounded-lg transition-all duration-300 shadow-[0_0_30px_rgba(212,255,0,0.3)] hover:shadow-[0_0_40px_rgba(212,255,0,0.5)] transform hover:-translate-y-0.5 text-lg"
                             >
-                                🔒 Claim My ₹5,900 Spot + Bonus
+                                🔒 Claim My Spot + Bonus
                             </button>
 
                             {/* Trust line */}

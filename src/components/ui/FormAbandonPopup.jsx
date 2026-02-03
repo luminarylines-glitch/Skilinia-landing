@@ -74,7 +74,7 @@ export default function FormAbandonPopup({ isVisible, onClose, onApply, spotsLef
                                     Wait, don't leave yet!
                                 </h3>
                                 <p className="text-gray-400 text-sm">
-                                    Your <span className="text-[#d4ff00] font-bold">₹5,900</span> spot is still reserved for the next 10 minutes
+                                    Your <span className="text-[#d4ff00] font-bold">reserved spot</span> is held for the next 10 minutes
                                 </p>
                             </div>
 

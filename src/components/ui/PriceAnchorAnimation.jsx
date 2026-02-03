@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useAnimation } from 'framer-motion';
 
 export default function PriceAnchorAnimation({
-    originalPrice = "₹15,000",
-    discountedPrice = "₹5,900",
-    discount = "61% OFF",
+    originalPrice = "REGULAR",
+    discountedPrice = "OFFER",
+    discount = "LIMITED",
     children
 }) {
     const ref = useRef(null);
