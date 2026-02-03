@@ -593,16 +593,6 @@ function EditorsLaunchpad() {
                     </span>
                 </motion.h1>
 
-                {/* Subheadline */}
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-gray-400 text-lg sm:text-xl max-w-xl mx-auto font-light leading-relaxed"
-                >
-                    The editing skills that get you hired—and paid premium rates.
-                </motion.p>
-
 
             </div>
 
