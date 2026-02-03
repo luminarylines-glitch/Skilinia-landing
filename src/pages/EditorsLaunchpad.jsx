@@ -603,12 +603,45 @@ function EditorsLaunchpad() {
                     The editing skills that get you hired—and paid premium rates.
                 </motion.p>
 
-                {/* Unified Status Hub - Minimalist Container */}
+
+            </div>
+
+            {/* 2. Media Card (Video) - Immediately After Hero */}
+            <motion.div
+                ref={videoSectionRef}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="w-full max-w-5xl relative z-10 mt-8 px-2 sm:px-0"
+            >
+                <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
+
+                {/* Single CTA below video */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="mt-6 text-center"
+                >
+                    <Button
+                        onClick={handleApply}
+                        variant="premium"
+                        className="text-sm sm:text-lg font-extrabold px-6 sm:px-10 py-3 uppercase tracking-wide"
+                        showViewers={true}
+                        viewerCount={cohortInfo.viewerCount || 23}
+                    >
+                        <span className="hidden sm:inline">🔒 Secure Your Spot ({effectiveSpotsLeft} Left)</span>
+                        <span className="sm:hidden">🔒 Secure Spot →</span>
+                    </Button>
+                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Cohort starts {cohortInfo.formattedDate}</p>
+                </motion.div>
+
+                {/* Status Hub - Moved Below CTA */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="w-full max-w-sm mx-auto bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-2xl space-y-4"
+                    transition={{ duration: 0.5, delay: 0.8 }}
+                    className="w-full max-w-sm mx-auto mt-8 bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-2xl space-y-4"
                 >
                     {/* Top Row: Live Context */}
                     <div className="flex items-center justify-between text-xs font-medium text-gray-400 px-1">
@@ -644,39 +677,6 @@ function EditorsLaunchpad() {
                             <span className="text-gray-500">FREE</span>
                         </div>
                     </div>
-                </motion.div>
-
-
-            </div>
-
-            {/* 2. Media Card (Video) - Immediately After Hero */}
-            <motion.div
-                ref={videoSectionRef}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="w-full max-w-5xl relative z-10 mt-8 px-2 sm:px-0"
-            >
-                <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
-
-                {/* Single CTA below video */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.6 }}
-                    className="mt-6 text-center"
-                >
-                    <Button
-                        onClick={handleApply}
-                        variant="premium"
-                        className="text-sm sm:text-lg font-extrabold px-6 sm:px-10 py-3 uppercase tracking-wide"
-                        showViewers={true}
-                        viewerCount={cohortInfo.viewerCount || 23}
-                    >
-                        <span className="hidden sm:inline">🔒 Secure Your Spot ({effectiveSpotsLeft} Left)</span>
-                        <span className="sm:hidden">🔒 Secure Spot →</span>
-                    </Button>
-                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Cohort starts {cohortInfo.formattedDate}</p>
                 </motion.div>
             </motion.div>
 
