@@ -646,12 +646,25 @@ function EditorsLaunchpad() {
                     </div>
                 </motion.div>
 
-                {/* Hero CTAs */}
+
+            </div>
+
+            {/* 2. Media Card (Video) - Immediately After Hero */}
+            <motion.div
+                ref={videoSectionRef}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="w-full max-w-5xl relative z-10 mt-8 px-2 sm:px-0"
+            >
+                <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
+
+                {/* Single CTA below video */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="mt-6 text-center"
                 >
                     <Button
                         onClick={handleApply}
@@ -663,57 +676,8 @@ function EditorsLaunchpad() {
                         <span className="hidden sm:inline">🔒 Secure Your Spot ({effectiveSpotsLeft} Left)</span>
                         <span className="sm:hidden">🔒 Secure Spot →</span>
                     </Button>
-
-                    <Button
-                        onClick={scrollToVideo}
-                        variant="outline"
-                        className="text-sm font-semibold"
-                    >
-                        <span>▶</span> Watch 4-Min Breakdown
-                    </Button>
+                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Cohort starts {cohortInfo.formattedDate}</p>
                 </motion.div>
-
-                {/* Social Proof + Urgency */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-gray-500"
-                >
-                    <span className="flex items-center gap-1 font-semibold text-[#d4ff00]">
-                        🎬 Growing Style Library
-                    </span>
-                    <span className="hidden sm:inline">•</span>
-                    <span className="flex items-center gap-1">
-                        ⭐⭐⭐⭐⭐ 127+ students placed
-                    </span>
-                    <span className="hidden sm:inline">•</span>
-                    <span>Next cohort: {cohortInfo.formattedDate} ({cohortInfo.daysUntil} days)</span>
-                </motion.div>
-            </div>
-
-            {/* 2. Media Card (Video) - Moved Up */}
-            <motion.div
-                ref={videoSectionRef}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="w-full max-w-5xl relative z-10 mb-16 sm:mb-24 px-2 sm:px-0"
-            >
-                <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
-
-                {/* Mobile-only CTA below video */}
-                <div className="mt-6 sm:hidden text-center">
-                    {(qualificationTier === 'high' || isUnlocked) && (
-                        <Button
-                            onClick={handleApply}
-                            variant="primary"
-                            className="w-full py-4 text-lg font-semibold shadow-lg shadow-emerald-500/10"
-                        >
-                            Start Your Journey
-                        </Button>
-                    )}
-                </div>
             </motion.div>
 
             {/* 4. Proof Strip - Simplified & Vertical on Mobile */}
