@@ -1006,7 +1006,7 @@ function EditorsLaunchpad() {
                     variant="primary"
                     className="px-12 py-5 text-lg font-bold"
                 >
-                    Apply for ₹5,900 Spot →
+                    Apply for Your Spot →
                 </Button>
                 <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Closing {cohortInfo.formattedDate}</p>
             </div>
@@ -1092,7 +1092,7 @@ function EditorsLaunchpad() {
                         variant="primary"
                         className="px-12 py-5 text-lg font-bold"
                     >
-                        Apply for ₹5,900 Spot →
+                        Apply for Your Spot →
                     </Button>
                     <p className="text-gray-400 text-xs mt-3">All your questions answered? Let's get started.</p>
                 </div>
