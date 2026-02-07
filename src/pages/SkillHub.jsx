@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 const SKILLS = [
     {
         id: 'dropshipping',
-        to: '/dropshipping',
-        title: 'Dropshipping',
+        to: '/internationaldropshipping',
+        title: 'International Dropshipping',
         subtitle: 'Global Sales',
         description: 'Sell globally from India without inventory.',
         actionLabel: 'EXPLORE',

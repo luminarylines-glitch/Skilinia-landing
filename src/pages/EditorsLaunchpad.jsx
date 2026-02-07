@@ -4,21 +4,24 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import VideoMediaCard from '../components/ui/VideoMediaCard';
 import Badge from '../components/ui/Badge';
-import PreQualificationQuiz from '../components/PreQualificationQuiz';
-import CountdownBanner from '../components/ui/CountdownBanner';
-import VisualSeatGrid from '../components/ui/VisualSeatGrid';
 import ValueGrid from '../components/ui/ValueGrid';
 import StyleShowcase from '../components/ui/StyleShowcase';
-import PricingComparisonCard from '../components/ui/PricingComparisonCard';
-import ScrollPlayhead from '../components/ui/ScrollPlayhead';
 import KeyframeSection from '../components/ui/KeyframeSection';
-import ExitIntentPopup from '../components/ui/ExitIntentPopup';
-import FormAbandonPopup from '../components/ui/FormAbandonPopup';
-import PostFormPopup from '../components/ui/PostFormPopup';
-import SeatSecuredAnimation from '../components/ui/SeatSecuredAnimation';
-import FloatingReservationTimer from '../components/ui/FloatingReservationTimer';
-import LiveActivityNotifications from '../components/ui/LiveActivityNotifications';
-import ScrollProgressBar from '../components/ui/ScrollProgressBar';
+import TestimonialAutoScroller from '../components/ui/TestimonialAutoScroller';
+
+// REMOVED FOR CONVERSION OPTIMIZATION:
+// - PreQualificationQuiz (gates form)
+// - CountdownBanner (aggressive urgency)
+// - VisualSeatGrid (fake scarcity)
+// - ScrollPlayhead (visual noise)
+// - ExitIntentPopup (annoying)
+// - FormAbandonPopup (annoying)
+// - FloatingReservationTimer (aggressive)
+// - LiveActivityNotifications (fake social proof)
+// - ScrollProgressBar (unnecessary)
+// - SeatSecuredAnimation (over-engineered)
+// - PostFormPopup (can add later if needed)
+// - PricingComparisonCard (removed for simplicity)
 
 
 // PLACEHOLDERS - USER SHOULD REPLACE THESE
@@ -45,19 +48,18 @@ const safeStorage = {
     }
 };
 
-// Constants
-const UNLOCK_THRESHOLD = 0.30; // Reduced from 50% to 30% for lead gen optimization
+// Constants - VIDEO GATE REMOVED for higher conversions
+// Users can watch video if they want, but CTA is always active
 
-// Cohort Configuration (Dynamic based on current date)
+
+// Cohort Configuration (Dynamic - always 3 days from now)
 const getCohortInfo = () => {
     const now = new Date();
-    // Next cohort starts on the 15th of next month (or current month if before 15th)
-    let cohortDate = new Date(now.getFullYear(), now.getMonth(), 15);
-    if (now.getDate() >= 10) {
-        cohortDate = new Date(now.getFullYear(), now.getMonth() + 1, 15);
-    }
 
-    const daysUntil = Math.ceil((cohortDate - now) / (1000 * 60 * 60 * 24));
+    // Cohort always starts 3 days from now (dynamic urgency)
+    const cohortDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
+    const daysUntil = 3; // Always 3 days away
     const cohortNumber = Math.floor((now.getFullYear() - 2025) * 12 + now.getMonth()) + 1;
 
     // Simulate spots (in real app, fetch from backend)
@@ -77,6 +79,7 @@ const getCohortInfo = () => {
         percentFilled: (spotsTaken / totalSpots) * 100
     };
 };
+
 
 // Analytics Event Tracking Helper
 const trackEvent = (eventName, properties = {}) => {
@@ -219,7 +222,7 @@ function EditorsLaunchpad() {
     const [quizCompleted, setQuizCompleted] = useState(true);
     const [isQualified, setIsQualified] = useState(null);
     const [qualificationTier, setQualificationTier] = useState(null);
-    const [isUnlocked, setIsUnlocked] = useState(false);
+    const [isUnlocked, setIsUnlocked] = useState(true); // ALWAYS UNLOCKED - no video gate
     const [videoProgress, setVideoProgress] = useState(0);
     const [showStickyCTA, setShowStickyCTA] = useState(false);
     const [stickyDismissed, setStickyDismissed] = useState(false);
@@ -428,14 +431,13 @@ function EditorsLaunchpad() {
             window.fbq('track', 'InitiateCheckout');
         }
 
-        // Show seat secured animation first!
-        setShowSeatAnimation(true);
+        // DIRECT TO FORM - no animation delay (speed = conversions)
+        openTallyForm();
     };
 
-    // Opens Tally form after animation completes
+    // Opens Tally form directly - simplified for speed
     const openTallyForm = () => {
-        setShowSeatAnimation(false);
-        setUserSeatSecured(true); // Mark user's spot as secured - updates all indicators
+        setUserSeatSecured(true);
 
         if (typeof window.Tally !== 'undefined') {
             setTallyFormOpened(true);
@@ -449,16 +451,7 @@ function EditorsLaunchpad() {
                 overlay: true,
                 autoClose: 0,
                 onClose: () => {
-                    // Only show abandon popup if form wasn't submitted
-                    if (!tallyFormSubmitted && !sessionStorage.getItem('tally_submitted')) {
-                        // Small delay to ensure submit event processed first
-                        setTimeout(() => {
-                            if (!sessionStorage.getItem('tally_submitted')) {
-                                setShowAbandonPopup(true);
-                                trackEvent('form_abandoned');
-                            }
-                        }, 300);
-                    }
+                    // REMOVED: Abandon popup was annoying users
                     setTallyFormOpened(false);
                 }
             });
@@ -467,84 +460,41 @@ function EditorsLaunchpad() {
         }
     };
 
+
     const dismissStickyCTA = () => {
         setStickyDismissed(true);
         setShowStickyCTA(false);
     };
 
-    // Pre-Qualification Screen
-    if (!quizCompleted) {
-        return (
-            <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#0a0a0a] to-black relative flex flex-col items-center justify-center py-12 px-4 font-sans selection:bg-[#d4ff00]/30 selection:text-black overflow-hidden">
-                {/* Background effects */}
-                <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
-                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#d4ff00]/5 rounded-full blur-[100px] pointer-events-none"></div>
+    // REMOVED: Pre-Qualification Screen
+    // Quiz was blocking conversions - now users go directly to landing page
 
-                {/* Logo */}
-                <div className="relative z-10 mb-8">
-                    <img src="/logo.png" alt="Skilinia Logo" className="h-12 w-auto object-contain drop-shadow-lg" />
-                </div>
-
-                {/* Intro Text */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-8 relative z-10"
-                >
-                    <h1 className="text-2xl sm:text-4xl font-bold text-white mb-3">
-                        Before we begin...
-                    </h1>
-                    <p className="text-gray-400 text-sm sm:text-base max-w-md mx-auto">
-                        Answer 5 quick questions so we can personalize your experience
-                    </p>
-                </motion.div>
-
-                {/* Quiz */}
-                <PreQualificationQuiz onComplete={handleQuizComplete} />
-            </div >
-        );
-    }
 
     // Main Landing Page (After Quiz)
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#0a0a0a] to-black relative flex flex-col items-center pt-8 pb-32 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#d4ff00]/30 selection:text-black overflow-hidden">
 
-            {/* COUNTDOWN BANNER - PINK GRADIENT */}
-            <CountdownBanner
-                targetDate={cohortInfo.formattedDate}
-                spotsLeft={effectiveSpotsLeft}
-            />
+            {/* SIMPLE COHORT INFO - No aggressive countdown */}
+            <div className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/5">
+                <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-center gap-3 text-sm">
+                    <span className="text-gray-400">Next Cohort:</span>
+                    <span className="text-white font-medium">{cohortInfo.formattedDate}</span>
+                    <span className="text-gray-600">•</span>
+                    <span className="text-[#d4ff00]">Limited Seats</span>
+                </div>
+            </div>
 
             {/* Cinematic Noise Overlay */}
             <div className="absolute inset-0 bg-noise opacity-20 pointer-events-none mix-blend-overlay"></div>
 
-            {/* Timeline Scrubbing Playhead */}
-            <ScrollPlayhead />
+            {/* Removed: ScrollPlayhead - visual noise */}
+            {/* Removed: Qualification Badge - unnecessary friction */}
 
             {/* 0. Logo */}
-            <div className="relative z-10 mb-4">
+            <div className="relative z-10 mb-4 mt-8">
                 <img src="/logo.png" alt="Skilinia Logo" className="h-14 w-auto object-contain drop-shadow-lg" />
             </div>
 
-            {/* Qualification Badge */}
-            {qualificationTier && (
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="relative z-10 mb-8"
-                >
-                    <Badge variant={qualificationTier === 'high' ? 'emerald' : qualificationTier === 'medium' ? 'warning' : 'neutral'}>
-                        <span className="mr-2">
-                            {qualificationTier === 'high' ? '⭐' : qualificationTier === 'medium' ? '👍' : '📚'}
-                        </span>
-                        {qualificationTier === 'high'
-                            ? "You're an excellent fit"
-                            : qualificationTier === 'medium'
-                                ? "You could be a good fit"
-                                : "Consider building basics first"}
-                    </Badge>
-                </motion.div>
-            )}
 
             {/* 1. Hero Section */}
             <div className="relative z-10 text-center w-full max-w-4xl mx-auto mb-16 space-y-10">
@@ -606,7 +556,7 @@ function EditorsLaunchpad() {
             >
                 <VideoMediaCard videoId={WISTIA_VIDEO_ID} className="shadow-2xl shadow-emerald-900/10" />
 
-                {/* Single CTA below video */}
+                {/* Single CTA below video - SIMPLIFIED */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -617,57 +567,15 @@ function EditorsLaunchpad() {
                         onClick={handleApply}
                         variant="premium"
                         className="text-sm sm:text-lg font-extrabold px-6 sm:px-10 py-3 uppercase tracking-wide"
-                        showViewers={true}
-                        viewerCount={cohortInfo.viewerCount || 23}
                     >
-                        <span className="hidden sm:inline">🔒 Secure Your Spot ({effectiveSpotsLeft} Left)</span>
-                        <span className="sm:hidden">🔒 Secure Spot →</span>
+                        <span className="hidden sm:inline">Apply for {cohortInfo.formattedDate} Cohort →</span>
+                        <span className="sm:hidden">Apply Now →</span>
                     </Button>
-                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft} spots left • Cohort starts {cohortInfo.formattedDate}</p>
+                    <p className="text-gray-500 text-xs mt-3">Quick application • We'll call you within 24 hours</p>
                 </motion.div>
 
-                {/* Status Hub - Moved Below CTA */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.8 }}
-                    className="w-full max-w-sm mx-auto mt-8 bg-white/[0.03] border border-white/10 rounded-2xl p-4 backdrop-blur-md shadow-2xl space-y-4"
-                >
-                    {/* Top Row: Live Context */}
-                    <div className="flex items-center justify-between text-xs font-medium text-gray-400 px-1">
-                        <div className="flex items-center gap-1.5">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span>{liveViewers} people viewing</span>
-                        </div>
-                        <span className="text-red-400 animate-pulse font-semibold">{effectiveSpotsLeft} spots left</span>
-                    </div>
-
-                    {/* Middle: Visual Scarcity (The Dots) */}
-                    <div className="py-1">
-                        <VisualSeatGrid
-                            totalSeats={cohortInfo.totalSpots}
-                            takenSeats={effectiveTakenSpots}
-                            className="mx-auto"
-                        />
-                    </div>
-
-                    {/* Bottom: Pricing Only (Timer moved to top banner) */}
-                    <div className="border-t border-white/5 pt-3 flex flex-col items-center gap-2 px-1">
-                        <div className="flex items-baseline gap-3">
-                            <span className="text-xl font-bold text-white tracking-wide">LIMITED COHORT OFFER</span>
-                        </div>
-                        {/* Bonus Value Badge */}
-                        <div className="flex items-center gap-1.5 text-xs">
-                            <span className="text-[#d4ff00]">🎁</span>
-                            <span className="text-gray-400">+ Bonus Pack worth</span>
-                            <span className="text-[#d4ff00] font-bold">₹18,000+</span>
-                            <span className="text-gray-500">FREE</span>
-                        </div>
-                    </div>
-                </motion.div>
+                {/* REMOVED: Status Hub - fake scarcity, seat grid, live viewers */}
+                {/* These elements were causing cognitive overload and reducing trust */}
             </motion.div>
 
             {/* 4. Proof Strip - Simplified & Vertical on Mobile */}
@@ -715,38 +623,10 @@ function EditorsLaunchpad() {
                 <ValueGrid />
             </motion.div>
 
-            {/* NEW: Comparison Section */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8 }}
-                className="relative z-10 w-full max-w-4xl mx-auto mb-24 sm:mb-32 px-4"
-            >
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-display font-bold text-white tracking-tight uppercase mb-4">
-                        SELF-TAUGHT VS{' '}
-                        <span className="bg-gradient-to-r from-[#d4ff00] to-[#c3ff00] text-transparent bg-clip-text">LAUNCHPAD</span>
-                    </h2>
-                    <p className="text-gray-400 text-sm">
-                        Why structured training beats YouTube tutorials
-                    </p>
-                </div>
+            {/* REMOVED: Comparison Section - PricingComparisonCard was adding too much content */}
+            {/* Keeping page focused on video -> apply flow */}
 
-                <PricingComparisonCard />
 
-                {/* CTA After Comparison */}
-                <div className="text-center mt-12">
-                    <Button
-                        onClick={handleApply}
-                        variant="primary"
-                        className="text-lg font-extrabold px-12 py-5 uppercase"
-                    >
-                        🔒 SECURE MY SPOT
-                    </Button>
-                    <p className="text-gray-500 text-xs mt-3">{effectiveSpotsLeft}/{cohortInfo.totalSpots} spots left • Cohort starts {cohortInfo.formattedDate}</p>
-                </div>
-            </motion.div>
 
             {/* 5. Main CTA Section */}
             <div className="relative z-10 mt-10 text-center">
@@ -907,9 +787,9 @@ function EditorsLaunchpad() {
                 </div>
             </motion.div>
 
-            {/* 7. Testimonials - Horizontal Scroll */}
-            <div className="relative z-10 mt-32 w-full max-w-7xl mx-auto px-4 overflow-hidden">
-                <div className="text-center mb-12">
+            {/* 7. Testimonials - Auto-sliding Marquee */}
+            <div className="relative z-10 mt-32 w-full overflow-hidden">
+                <div className="text-center mb-12 px-4">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-3">
                         Student Results
                     </p>
@@ -918,40 +798,62 @@ function EditorsLaunchpad() {
                     </h2>
                 </div>
 
-                <div className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar px-4">
-                    {TESTIMONIALS.map((testimonial, i) => (
-                        <Card key={i} className="min-w-[300px] md:min-w-[350px] p-6 snap-center bg-[#111] border-white/5">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden">
-                                    {testimonial.image ? (
-                                        <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-white bg-emerald-900">{testimonial.avatar}</div>
-                                    )}
-                                </div>
-                                <div>
-                                    <p className="text-white font-medium text-sm">{testimonial.name}</p>
-                                    <p className="text-xs text-gray-500">{testimonial.city}</p>
-                                </div>
-                            </div>
+                {/* Auto-sliding container - no scrollbar */}
+                <div className="relative">
+                    {/* Fade edges for premium look */}
+                    <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+                    <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
 
-                            {testimonial.result && (
-                                <div className="mb-3">
-                                    <Badge variant="emerald">{testimonial.result}</Badge>
+                    {/* Infinite scroll animation */}
+                    <motion.div
+                        className="flex gap-6"
+                        animate={{ x: [0, -((350 + 24) * TESTIMONIALS.length)] }}
+                        transition={{
+                            x: {
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                duration: 25,
+                                ease: "linear"
+                            }
+                        }}
+                        style={{ width: 'max-content' }}
+                    >
+                        {/* Double the testimonials for seamless loop */}
+                        {[...TESTIMONIALS, ...TESTIMONIALS].map((testimonial, i) => (
+                            <Card key={i} className="min-w-[300px] md:min-w-[350px] p-6 bg-[#111] border-white/5 flex-shrink-0">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 rounded-full bg-gray-800 overflow-hidden">
+                                        {testimonial.image ? (
+                                            <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-white bg-emerald-900">{testimonial.avatar}</div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-medium text-sm">{testimonial.name}</p>
+                                        <p className="text-xs text-gray-500">{testimonial.city}</p>
+                                    </div>
                                 </div>
-                            )}
 
-                            <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                                "{testimonial.text}"
-                            </p>
+                                {testimonial.result && (
+                                    <div className="mb-3">
+                                        <Badge variant="emerald">{testimonial.result}</Badge>
+                                    </div>
+                                )}
 
-                            <p className="text-xs text-gray-600 mt-auto">
-                                Was: {testimonial.before} • {testimonial.timeframe}
-                            </p>
-                        </Card>
-                    ))}
+                                <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                                    "{testimonial.text}"
+                                </p>
+
+                                <p className="text-xs text-gray-600 mt-auto">
+                                    Was: {testimonial.before} • {testimonial.timeframe}
+                                </p>
+                            </Card>
+                        ))}
+                    </motion.div>
                 </div>
             </div>
+
 
             {/* CTA After Testimonials */}
             <div className="relative z-10 mt-12 text-center">
@@ -1127,42 +1029,13 @@ function EditorsLaunchpad() {
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            {/* Form Abandon Popup - triggers when user closes form without submitting */}
-            <FormAbandonPopup
-                isVisible={showAbandonPopup}
-                onClose={() => setShowAbandonPopup(false)}
-                onApply={openTallyForm}
-                spotsLeft={effectiveSpotsLeft}
-            />
-
-            {/* Seat Secured Animation - plays before form opens */}
-            <SeatSecuredAnimation
-                isVisible={showSeatAnimation}
-                onComplete={openTallyForm}
-                spotsLeft={effectiveSpotsLeft}
-                totalSpots={cohortInfo.totalSpots}
-            />
-
-            {/* Post-Form Confirmation Popup */}
-            <PostFormPopup
-                isVisible={showPostFormPopup}
-                onClose={() => setShowPostFormPopup(false)}
-                cohortDate={cohortInfo.formattedDate}
-            />
-
-            {/* Floating Timer - shows above Tally form */}
-            <FloatingReservationTimer
-                isVisible={tallyFormOpened}
-                seatNumber={effectiveTakenSpots}
-                initialMinutes={10}
-            />
-
-            {/* Scroll Progress Bar at top of page */}
-            <ScrollProgressBar />
-
-            {/* Live Activity Notifications - social proof toasts */}
-            <LiveActivityNotifications isEnabled={!showSeatAnimation && !tallyFormOpened} />
+            {/* REMOVED FOR CONVERSION OPTIMIZATION: */}
+            {/* - FormAbandonPopup - annoying, pushes users away */}
+            {/* - SeatSecuredAnimation - over-engineered, delays form */}
+            {/* - PostFormPopup - can add back if needed */}
+            {/* - FloatingReservationTimer - aggressive pressure */}
+            {/* - ScrollProgressBar - unnecessary visual noise */}
+            {/* - LiveActivityNotifications - fake social proof */}
         </div >
     );
 }
