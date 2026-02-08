@@ -113,6 +113,20 @@ function DropshippingV5() {
         return () => clearInterval(interval);
     }, []);
 
+    const [showStickyNav, setShowStickyNav] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowStickyNav(window.scrollY > 600);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToPricing = () => {
+        document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <div className="min-h-screen bg-black text-white font-sans antialiased">
 
@@ -607,7 +621,7 @@ function DropshippingV5() {
             </section >
 
             {/* ==================== PRICE & CTA ==================== */}
-            < section className="py-24 px-6 bg-[#d4ff00] text-black" >
+            < section id="pricing-section" className="py-24 px-6 bg-[#d4ff00] text-black" >
                 <div className="max-w-2xl mx-auto text-center">
                     <motion.div
                         initial="hidden"
@@ -659,6 +673,32 @@ function DropshippingV5() {
                     </p>
                 </div>
             </footer >
+
+            {/* Sticky Top Navbar - V5 BOLD STYLE */}
+            <AnimatePresence>
+                {showStickyNav && (
+                    <motion.div
+                        initial={{ y: -100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -100, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800"
+                    >
+                        <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
+                            {/* Logo / Brand */}
+                            <span className="text-[#d4ff00] font-black text-xl tracking-tighter">SKILINIA</span>
+
+                            <button
+                                onClick={scrollToPricing}
+                                className="group flex items-center gap-2 px-6 py-2.5 bg-[#d4ff00] text-black font-black text-sm hover:bg-white transition-all duration-200 border-2 border-transparent hover:border-[#d4ff00]"
+                            >
+                                APPLY NOW
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div >
     );
 }

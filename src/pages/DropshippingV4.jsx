@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Check, X, Globe, CreditCard, Package, TrendingUp, ShoppingCart, Zap, PlayCircle, BookOpen, Users, Shield, ChevronDown, Building2, Truck, BarChart3, Sparkles } from 'lucide-react';
 
@@ -30,6 +30,20 @@ const glowPulse = {
 // ============================================
 
 function DropshippingV4() {
+    const [showStickyNav, setShowStickyNav] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowStickyNav(window.scrollY > 600);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const scrollToPricing = () => {
+        document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <div className="min-h-screen text-white font-sans antialiased overflow-hidden" style={{ background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #1E1B4B 100%)' }}>
             {/* Animated gradient orbs */}
@@ -496,7 +510,7 @@ function DropshippingV4() {
             </section>
 
             {/* ==================== PRICE & CTA ==================== */}
-            <section className="py-24 px-6">
+            <section id="pricing-section" className="py-24 px-6">
                 <div className="max-w-xl mx-auto text-center">
                     <motion.div
                         initial="hidden"
@@ -567,13 +581,42 @@ function DropshippingV4() {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 px-6 border-t border-white/5">
+            <footer className="py-12 px-6 border-t border-white/5 pb-32">
                 <div className="max-w-4xl mx-auto text-center">
                     <p className="text-sm text-purple-200/30">
                         © 2026 Skilinia. Built for serious learners in India.
                     </p>
                 </div>
             </footer>
+
+            {/* Sticky Mobile/Desktop CTA */}
+            <motion.div
+                initial={{ y: 100, opacity: 0 }}
+                animate={{ y: showStickyNav ? 0 : 100, opacity: showStickyNav ? 1 : 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="fixed bottom-8 left-0 right-0 z-50 flex justify-center pointer-events-none px-4"
+            >
+                <div
+                    className="p-1.5 rounded-full pointer-events-auto backdrop-blur-md"
+                    style={{
+                        background: 'rgba(19, 10, 35, 0.4)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.5)'
+                    }}
+                >
+                    <button
+                        onClick={scrollToPricing}
+                        className="group flex items-center gap-2 px-8 py-3 rounded-full font-bold text-white transition-all hover:scale-105 active:scale-95"
+                        style={{
+                            background: 'linear-gradient(135deg, #A855F7, #EC4899)',
+                            boxShadow: '0 0 20px rgba(168, 85, 247, 0.4)'
+                        }}
+                    >
+                        Apply Now
+                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </motion.div>
         </div>
     );
 }
