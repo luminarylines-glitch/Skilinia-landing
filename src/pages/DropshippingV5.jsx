@@ -206,7 +206,7 @@ function DropshippingV5() {
                                 transition={{ delay: 0.5 }}
                                 className="flex flex-col sm:flex-row gap-6 items-start"
                             >
-                                <button className="group relative px-10 py-5 bg-[#d4ff00] text-black font-black text-xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(212,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] rounded-none skew-x-[-10deg] hover:skew-x-0">
+                                <button onClick={() => window.open('https://tally.so/r/XxWONV', '_blank')} className="group relative px-10 py-5 bg-[#d4ff00] text-black font-black text-xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(212,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] rounded-none skew-x-[-10deg] hover:skew-x-0">
                                     <span className="relative z-10 flex items-center gap-3 skew-x-[10deg] group-hover:skew-x-0 transition-transform">
                                         JOIN THE 1%
                                         <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
@@ -642,7 +642,7 @@ function DropshippingV5() {
                         </motion.div>
 
                         <motion.div variants={fadeInUp}>
-                            <button className="group inline-flex items-center gap-4 px-12 py-6 bg-black text-white font-black text-xl hover:bg-gray-900 transition-colors">
+                            <button onClick={() => window.open('https://tally.so/r/XxWONV', '_blank')} className="group inline-flex items-center gap-4 px-12 py-6 bg-black text-white font-black text-xl hover:bg-gray-900 transition-colors">
                                 ENROLL NOW
                                 <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                             </button>
@@ -689,7 +689,7 @@ function DropshippingV5() {
                             <span className="text-[#d4ff00] font-black text-xl tracking-tighter">SKILINIA</span>
 
                             <button
-                                onClick={scrollToPricing}
+                                onClick={() => window.open('https://tally.so/r/XxWONV', '_blank')}
                                 className="group flex items-center gap-2 px-6 py-2.5 bg-[#d4ff00] text-black font-black text-sm hover:bg-white transition-all duration-200 border-2 border-transparent hover:border-[#d4ff00]"
                             >
                                 APPLY NOW
