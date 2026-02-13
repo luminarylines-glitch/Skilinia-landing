@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, X, Globe, CreditCard, Package, TrendingUp, ShoppingCart, Zap, PlayCircle, BookOpen, Users, Shield, Building2, Truck, BarChart3 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Check, X, Globe, CreditCard, Package, TrendingUp, ShoppingCart, Zap, PlayCircle, BookOpen, Users, Shield, Building2, Truck, BarChart3 } from 'lucide-react';
 
 // Animation variants
 const fadeInUp = {
@@ -703,16 +704,22 @@ function DropshippingV5() {
                             {/* Logo / Brand */}
                             <span className="text-[#d4ff00] font-black text-xl tracking-tighter">SKILINIA</span>
 
-                            <button
-                                data-tally-open="XxWONV"
-                                data-tally-layout="modal"
-                                data-tally-emoji-text="👋"
-                                data-tally-emoji-animation="wave"
-                                className="group flex items-center gap-2 px-6 py-2.5 bg-[#d4ff00] text-black font-black text-sm hover:bg-white transition-all duration-200 border-2 border-transparent hover:border-[#d4ff00]"
-                            >
-                                APPLY NOW
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                            </button>
+                            <div className="flex items-center gap-6">
+                                <Link to="/internationaldropshipping/curriculum" className="text-sm font-bold text-gray-400 hover:text-white transition-colors uppercase tracking-widest hidden md:block">
+                                    Curriculum
+                                </Link>
+
+                                <button
+                                    data-tally-open="XxWONV"
+                                    data-tally-layout="modal"
+                                    data-tally-emoji-text="👋"
+                                    data-tally-emoji-animation="wave"
+                                    className="group flex items-center gap-2 px-6 py-2.5 bg-[#d4ff00] text-black font-black text-sm hover:bg-white transition-all duration-200 border-2 border-transparent hover:border-[#d4ff00]"
+                                >
+                                    APPLY NOW
+                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
                         </div>
                     </motion.div>
                 )}
