@@ -14,8 +14,7 @@ export default function PricingComparisonCard({ className = '' }) {
         { text: 'Growing style library', available: true, highlight: true },
         { text: 'Live cohort support', available: true },
         { text: 'Lifetime access + updates', available: true, highlight: true },
-        { text: '127+ students placed', available: true },
-        { text: '7-day money-back guarantee', available: true, highlight: true }
+        { text: '127+ students placed', available: true }
     ];
 
     return (

@@ -555,8 +555,6 @@ function DropshippingV4() {
                                 Enroll Now
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </button>
-
-                            <p className="text-sm text-purple-300/40 mt-6">7-day money-back guarantee</p>
                         </motion.div>
 
                         <motion.div variants={fadeInUp} className="grid grid-cols-3 gap-6">

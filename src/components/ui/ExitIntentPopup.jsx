@@ -137,7 +137,7 @@ export default function ExitIntentPopup({ onApply, spotsLeft = 6 }) {
 
                             {/* Trust line */}
                             <p className="text-gray-500 text-xs">
-                                7-day money-back guarantee • No risk
+                                No risk
                             </p>
                         </div>
                     </motion.div>

@@ -910,9 +910,6 @@ function EditorsLaunchpad() {
                 {/* Trust Badges */}
                 <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-gray-400">
                     <span className="flex items-center gap-2">
-                        <span className="text-[#d4ff00]">✓</span> 7-Day Money-Back Guarantee
-                    </span>
-                    <span className="flex items-center gap-2">
                         <span className="text-[#d4ff00]">✓</span> Lifetime Access
                     </span>
                     <span className="flex items-center gap-2">
@@ -982,8 +979,6 @@ function EditorsLaunchpad() {
 
                     <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
                         <span>⏰ Cohort starts {cohortInfo.formattedDate}</span>
-                        <span>•</span>
-                        <span>💰 7-Day Money-Back Guarantee</span>
                     </div>
                 </motion.div>
             </div>

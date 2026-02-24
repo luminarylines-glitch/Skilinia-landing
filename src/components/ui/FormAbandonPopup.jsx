@@ -121,7 +121,7 @@ export default function FormAbandonPopup({ isVisible, onClose, onApply, spotsLef
 
                             {/* Trust line */}
                             <p className="text-gray-500 text-xs">
-                                Takes only 2 minutes • 7-day money-back guarantee
+                                Takes only 2 minutes
                             </p>
 
                             {/* Skip option */}
