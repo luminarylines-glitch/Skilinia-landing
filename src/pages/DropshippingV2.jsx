@@ -433,8 +433,8 @@ function DropshippingV2() {
 
                         <motion.div variants={fadeInUp} className="mb-10 p-8 rounded-2xl bg-gradient-to-b from-emerald-50 to-white border border-emerald-200">
                             <div className="mb-4">
-                                <span className="text-5xl font-bold text-gray-900">₹4,999</span>
-                                <span className="text-xl text-gray-400 ml-2 line-through">₹9,999</span>
+                                <span className="text-5xl font-bold text-gray-900">₹15,000</span>
+                                <span className="text-xl text-gray-400 ml-2 line-through">₹25,000</span>
                             </div>
                             <p className="text-sm text-emerald-600 font-medium mb-6">Launch price • Limited time</p>
 

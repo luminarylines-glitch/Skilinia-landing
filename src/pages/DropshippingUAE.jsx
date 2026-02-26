@@ -17,7 +17,7 @@ const staggerContainer = {
 // Headlines to cycle through
 const HEADLINES = [
     { line1: "STILL WATCHING", line2: "FAKE GURU", line3: "TUTORIALS?", accent: 1, image: "/guru_flex_money.png" },
-    { line1: "TIRED OF", line2: "₹500 PROFIT", line3: "MARGINS?", accent: 2 },
+    { line1: "TIRED OF", line2: "AED 25 PROFIT", line3: "MARGINS?", accent: 2 },
     { line1: "STOP COPYING", line2: "INDIAN", line3: "TUTORIALS.", accent: 1 },
     { line1: "INTERNATIONAL", line2: "DROPSHIPPING", line3: "DONE RIGHT.", accent: 2 },
 ];
@@ -94,7 +94,7 @@ function BlurHeadline({ headline, isVisible }) {
 // Pure black, neon yellow, dramatic typography, impactful blocks
 // ============================================
 
-function DropshippingV5() {
+function DropshippingUAE() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(true);
 
@@ -114,19 +114,35 @@ function DropshippingV5() {
         return () => clearInterval(interval);
     }, []);
 
-    // Listen for Tally Form Submission to fire Facebook Pixel Lead event
     useEffect(() => {
         const handleMessage = (e) => {
             if (e?.data?.event === 'Tally.FormSubmitted' || (typeof e?.data === 'string' && e.data.includes('Tally.FormSubmitted'))) {
-                // Fire Facebook Pixel Lead Event
+                // Fire Facebook Pixel Lead Event for the UAE Pixel
                 if (window.fbq) {
-                    window.fbq('track', 'Lead');
-                    console.log('Lead event fired via Tally submission');
+                    window.fbq('trackSingle', '2721860081508150', 'Lead');
+                    console.log('Lead event fired via Tally submission (UAE Pixel)');
                 }
             }
         };
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
+    // Inject UAE Meta Pixel Base Code
+    useEffect(() => {
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', '2721860081508150');
+        window.fbq('trackSingle', '2721860081508150', 'PageView');
     }, []);
 
     const [showStickyNav, setShowStickyNav] = useState(false);
@@ -168,7 +184,7 @@ function DropshippingV5() {
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4ff00] opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-3 w-3 bg-[#d4ff00]"></span>
                             </span>
-                            <span className="text-[#d4ff00] font-mono text-sm tracking-[0.2em] font-bold uppercase">India → Global v2.0</span>
+                            <span className="text-[#d4ff00] font-mono text-sm tracking-[0.2em] font-bold uppercase">Middle East → Global v2.0</span>
                         </motion.div>
 
                         {/* HEADLINE BLOCK */}
@@ -211,7 +227,7 @@ function DropshippingV5() {
                                 transition={{ delay: 0.4 }}
                                 className="text-xl md:text-2xl text-gray-400 font-medium leading-relaxed"
                             >
-                                The complete system to build a <span className="text-white font-bold decoration-[#d4ff00] underline decoration-4 underline-offset-4">real international brand</span> from India.
+                                The complete system to build a <span className="text-white font-bold decoration-[#d4ff00] underline decoration-4 underline-offset-4">real international brand</span> from the UAE.
                                 <br />
                                 <span className="text-gray-500 text-lg mt-2 block">No inventory. No low-margin domestic wars. pure profit.</span>
                             </motion.p>
@@ -222,7 +238,7 @@ function DropshippingV5() {
                                 transition={{ delay: 0.5 }}
                                 className="flex flex-col sm:flex-row gap-6 items-start"
                             >
-                                <button data-tally-open="XxWONV" data-tally-layout="modal" data-tally-emoji-text="👋" data-tally-emoji-animation="wave" className="group relative px-10 py-5 bg-[#d4ff00] text-black font-black text-xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(212,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] rounded-none skew-x-[-10deg] hover:skew-x-0">
+                                <button data-tally-open="pbLKgq" data-tally-layout="modal" data-tally-emoji-text="👋" data-tally-emoji-animation="wave" className="group relative px-10 py-5 bg-[#d4ff00] text-black font-black text-xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(212,255,0,0.4)] hover:shadow-[0_0_40px_rgba(255,255,255,0.6)] rounded-none skew-x-[-10deg] hover:skew-x-0">
                                     <span className="relative z-10 flex items-center gap-3 skew-x-[10deg] group-hover:skew-x-0 transition-transform">
                                         JOIN THE 1%
                                         <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
@@ -232,7 +248,7 @@ function DropshippingV5() {
                                 <div className="flex flex-col gap-2 pt-2">
                                     <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
                                         <X className="w-4 h-4 text-red-500" />
-                                        <span>NO AMAZON INDIA</span>
+                                        <span>NO AMAZON UAE</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
                                         <X className="w-4 h-4 text-red-500" />
@@ -311,22 +327,22 @@ function DropshippingV5() {
                                 {
                                     num: "01",
                                     title: "TUTORIAL OVERLOAD",
-                                    desc: "YouTube is filled with outdated, generic advice. Zero India-specific guidance on GST, payments, or entity setup."
+                                    desc: "YouTube is filled with outdated, generic advice. Zero UAE/Middle East-specific guidance on payments, or entity setup."
                                 },
                                 {
                                     num: "02",
                                     title: "DOMESTIC TRAP",
-                                    desc: "Amazon India, Flipkart, Meesho = 2-5% margins. No real business. Just a race to the bottom."
+                                    desc: "Amazon UAE, Noon = 2-5% margins. No real business. Just a race to the bottom."
                                 },
                                 {
                                     num: "03",
                                     title: "PAYMENT BLOCK",
-                                    desc: "Stripe doesn't work in India. PayPal has limits. 90% give up here without launching."
+                                    desc: "Getting proper Stripe access setup is tricky in the Middle East without the right framework."
                                 },
                                 {
                                     num: "04",
                                     title: "AD BURNOUT",
-                                    desc: "Without testing frameworks, most waste ₹50k-1L on Facebook ads learning the wrong lessons."
+                                    desc: "Without testing frameworks, most waste AED 2,500-5,000 on Facebook ads learning the wrong lessons."
                                 }
                             ].map((item, i) => (
                                 <motion.div
@@ -362,7 +378,7 @@ function DropshippingV5() {
                         </motion.h2>
                         <motion.p variants={fadeInUp} className="text-xl text-black/70 max-w-xl mb-16">
                             Not motivation. Not vague advice. A practical framework built specifically for
-                            Indians selling to international customers.
+                            Entrepreneurs from the Middle East selling to international customers.
                         </motion.p>
 
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
@@ -408,7 +424,7 @@ function DropshippingV5() {
 
                         <div className="space-y-0">
                             {[
-                                "Form a US LLC from India without lawyers or travel",
+                                "Form a US LLC from the UAE without lawyers or travel",
                                 "Open Stripe and accept payments from 135+ countries",
                                 "Find products with proven demand using data",
                                 "Build a Shopify store that actually converts",
@@ -453,7 +469,7 @@ function DropshippingV5() {
                                     {[
                                         "Ready to invest time learning",
                                         "Can commit 3-6 months",
-                                        "Have ₹50k-1L starting capital",
+                                        "Have AED 2,500-5,000 starting capital",
                                         "Understand testing is required",
                                         "Want to build real business"
                                     ].map((item, i) => (
@@ -581,7 +597,7 @@ function DropshippingV5() {
                             },
                             {
                                 icon: Globe,
-                                title: "INDIA-SPECIFIC",
+                                title: "UAE-SPECIFIC",
                                 desc: "Every module addresses your unique challenges: LLC, payments, timezones."
                             },
                             {
@@ -618,7 +634,7 @@ function DropshippingV5() {
                             {[
                                 { icon: PlayCircle, title: "20+ HOURS", desc: "Video lessons" },
                                 { icon: BookOpen, title: "STEP-BY-STEP", desc: "Clear process" },
-                                { icon: Globe, title: "INDIA FOCUS", desc: "Local solutions" },
+                                { icon: Globe, title: "UAE FOCUS", desc: "Local solutions" },
                                 { icon: Zap, title: "BUILD ALONG", desc: "Practical work" }
                             ].map((item, i) => (
                                 <motion.div
@@ -653,12 +669,12 @@ function DropshippingV5() {
                         </motion.p>
 
                         <motion.div variants={fadeInUp} className="mb-10">
-                            <span className="text-7xl md:text-8xl font-black">₹15,000</span>
-                            <span className="text-3xl text-black/40 ml-2 line-through">₹25,000</span>
+                            <span className="text-7xl md:text-8xl font-black">AED 699</span>
+                            <span className="text-3xl text-black/40 ml-2 line-through">AED 1,100</span>
                         </motion.div>
 
                         <motion.div variants={fadeInUp}>
-                            <button data-tally-open="XxWONV" data-tally-layout="modal" data-tally-emoji-text="👋" data-tally-emoji-animation="wave" className="group inline-flex items-center gap-4 px-12 py-6 bg-black text-white font-black text-xl hover:bg-gray-900 transition-colors">
+                            <button data-tally-open="pbLKgq" data-tally-layout="modal" data-tally-emoji-text="👋" data-tally-emoji-animation="wave" className="group inline-flex items-center gap-4 px-12 py-6 bg-black text-white font-black text-xl hover:bg-gray-900 transition-colors">
                                 ENROLL NOW
                                 <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                             </button>
@@ -684,7 +700,7 @@ function DropshippingV5() {
             < footer className="py-12 px-6 bg-black border-t border-gray-900" >
                 <div className="max-w-4xl mx-auto text-center">
                     <p className="text-sm text-gray-700 font-bold tracking-wider">
-                        © 2026 SKILINIA — BUILT FOR SERIOUS LEARNERS IN INDIA
+                        © 2026 SKILINIA — BUILT FOR SERIOUS LEARNERS IN THE UAE
                     </p>
                 </div>
             </footer >
@@ -709,7 +725,7 @@ function DropshippingV5() {
                                 </Link>
 
                                 <button
-                                    data-tally-open="XxWONV"
+                                    data-tally-open="pbLKgq"
                                     data-tally-layout="modal"
                                     data-tally-emoji-text="👋"
                                     data-tally-emoji-animation="wave"
@@ -727,4 +743,4 @@ function DropshippingV5() {
     );
 }
 
-export default DropshippingV5;
+export default DropshippingUAE;

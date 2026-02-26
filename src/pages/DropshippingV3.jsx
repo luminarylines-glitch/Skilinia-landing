@@ -485,8 +485,8 @@ function DropshippingV3() {
 
                         <motion.div variants={fadeInUp} className="mb-8 p-8 rounded-lg border-2 border-dashed border-sky-500/40 bg-sky-500/5">
                             <code className="text-slate-500 text-sm">const price = </code>
-                            <span className="text-5xl font-bold text-white">₹4,999</span>
-                            <span className="text-slate-500 ml-2 line-through">₹9,999</span>
+                            <span className="text-5xl font-bold text-white">₹15,000</span>
+                            <span className="text-slate-500 ml-2 line-through">₹25,000</span>
                             <code className="text-slate-500 text-sm">;</code>
                         </motion.div>
 

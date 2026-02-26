@@ -539,9 +539,9 @@ function DropshippingV4() {
                                     className="text-6xl font-bold bg-clip-text text-transparent"
                                     style={{ backgroundImage: 'linear-gradient(135deg, #A855F7, #EC4899)' }}
                                 >
-                                    ₹4,999
+                                    ₹15,000
                                 </span>
-                                <span className="text-2xl text-purple-300/40 ml-3 line-through">₹9,999</span>
+                                <span className="text-2xl text-purple-300/40 ml-3 line-through">₹25,000</span>
                             </div>
                             <p className="text-purple-300 text-sm mb-8">Launch pricing • Limited time</p>
 

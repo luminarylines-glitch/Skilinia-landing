@@ -13,6 +13,7 @@ import DropshippingV3 from './pages/DropshippingV3';
 import DropshippingV4 from './pages/DropshippingV4';
 import DropshippingV5 from './pages/DropshippingV5';
 import DropshippingCourseContent from './pages/DropshippingCourseContent';
+import DropshippingUAE from './pages/DropshippingUAE';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/editorslaunchpad" element={<EditorsLaunchpad />} />
                 <Route path="/dropshipping" element={<Dropshipping />} />
                 <Route path="/internationaldropshipping" element={<DropshippingV5 />} />
+                <Route path="/internationaldropshipping-uae" element={<DropshippingUAE />} />
                 <Route path="/internationaldropshipping/curriculum" element={<DropshippingCourseContent />} />
 
                 <Route path="/digitalproducts" element={<DigitalProducts />} />
