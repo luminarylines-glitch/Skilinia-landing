@@ -45,13 +45,43 @@ const PERKS = [
 
 function Hiring() {
     const [isScrolled, setIsScrolled] = useState(false);
+    const [tallyFormSubmitted, setTallyFormSubmitted] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+
+        // Initialize Hiring Meta Pixel
+        if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+            window.fbq('init', '1421156615660541');
+            window.fbq('trackSingle', '1421156615660541', 'PageView');
+        }
+
+        // Tally Submission Tracking for Hiring Form
+        const handleTallySubmit = (e) => {
+            const isTallySubmit =
+                (typeof e.data === 'string' && e.data.includes('Tally.FormSubmitted')) ||
+                (typeof e.data === 'object' && e.data?.event === 'Tally.FormSubmitted');
+
+            if (isTallySubmit) {
+                console.log("✅ Hiring Tally Form Submitted! Tracking 'Lead' event.");
+                setTallyFormSubmitted(true);
+
+                // Fire Lead event to the specific Hiring Pixel
+                if (typeof window.fbq === 'function') {
+                    window.fbq('trackSingle', '1421156615660541', 'Lead');
+                }
+            }
+        };
+
+        window.addEventListener('message', handleTallySubmit);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('message', handleTallySubmit);
+        };
     }, []);
 
     const openTallyForm = () => {
