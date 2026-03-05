@@ -14,6 +14,7 @@ import DropshippingV4 from './pages/DropshippingV4';
 import DropshippingV5 from './pages/DropshippingV5';
 import DropshippingCourseContent from './pages/DropshippingCourseContent';
 import DropshippingUAE from './pages/DropshippingUAE';
+import Hiring from './pages/Hiring';
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/internationaldropshipping/curriculum" element={<DropshippingCourseContent />} />
 
                 <Route path="/digitalproducts" element={<DigitalProducts />} />
+                <Route path="/Hiring" element={<Hiring />} />
 
                 {/* 5 Unique Dropshipping Course Landing Pages */}
                 <Route path="/1" element={<DropshippingV1 />} />
