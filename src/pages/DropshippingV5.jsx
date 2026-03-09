@@ -229,14 +229,29 @@ function DropshippingV5() {
                                     </span>
                                 </button>
 
-                                <div className="flex flex-col gap-2 pt-2">
-                                    <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
-                                        <X className="w-4 h-4 text-red-500" />
-                                        <span>NO AMAZON INDIA</span>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
-                                        <X className="w-4 h-4 text-red-500" />
-                                        <span>NO FAKE SCREENSHOTS</span>
+                                <div className="flex flex-col gap-3 pt-2">
+                                    {/* Price Badge */}
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.7 }}
+                                        className="inline-flex items-center gap-3 px-5 py-3 bg-white/5 border border-[#d4ff00]/30 backdrop-blur-sm rounded-lg"
+                                    >
+                                        <span className="text-[#d4ff00] font-black text-2xl">₹5,900</span>
+                                        <span className="text-gray-500 line-through text-lg">₹25,000</span>
+                                        <span className="bg-[#FF2C2C] text-white text-xs font-black px-2 py-1 rounded animate-pulse">76% OFF</span>
+                                    </motion.div>
+                                    <span className="text-xs text-gray-600 font-medium tracking-wide">LAUNCH OFFER — LIMITED SEATS</span>
+
+                                    <div className="flex items-center gap-4 mt-1">
+                                        <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
+                                            <X className="w-4 h-4 text-red-500" />
+                                            <span>NO AMAZON INDIA</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm font-bold text-gray-500">
+                                            <X className="w-4 h-4 text-red-500" />
+                                            <span>NO FAKE SCREENSHOTS</span>
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -652,9 +667,14 @@ function DropshippingV5() {
                             One-time payment. Lifetime access. All updates.
                         </motion.p>
 
+                        <motion.div variants={fadeInUp} className="mb-4">
+                            <span className="text-3xl text-black/40 line-through">₹25,000</span>
+                        </motion.div>
+                        <motion.div variants={fadeInUp} className="mb-4">
+                            <span className="text-7xl md:text-8xl font-black">₹5,900</span>
+                        </motion.div>
                         <motion.div variants={fadeInUp} className="mb-10">
-                            <span className="text-7xl md:text-8xl font-black">₹15,000</span>
-                            <span className="text-3xl text-black/40 ml-2 line-through">₹25,000</span>
+                            <span className="inline-block bg-black text-[#d4ff00] font-black text-sm px-4 py-2 tracking-widest">76% OFF — LAUNCH PRICE</span>
                         </motion.div>
 
                         <motion.div variants={fadeInUp}>
@@ -719,6 +739,37 @@ function DropshippingV5() {
                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ==================== STICKY BOTTOM CTA BAR ==================== */}
+            <AnimatePresence>
+                {showStickyNav && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-xl border-t border-[#d4ff00]/30"
+                    >
+                        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[#d4ff00] font-black text-xl sm:text-2xl">₹5,900</span>
+                                <span className="text-gray-500 line-through text-sm sm:text-base">₹25,000</span>
+                                <span className="bg-[#FF2C2C] text-white text-[10px] sm:text-xs font-black px-2 py-1 rounded animate-pulse hidden sm:inline-block">76% OFF</span>
+                            </div>
+                            <button
+                                data-tally-open="XxWONV"
+                                data-tally-layout="modal"
+                                data-tally-emoji-text="👋"
+                                data-tally-emoji-animation="wave"
+                                className="group flex items-center gap-2 px-6 sm:px-8 py-3 bg-[#d4ff00] text-black font-black text-sm sm:text-base hover:bg-white transition-all duration-200"
+                            >
+                                APPLY NOW
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </button>
                         </div>
                     </motion.div>
                 )}
