@@ -669,8 +669,8 @@ function DropshippingUAE() {
                         </motion.p>
 
                         <motion.div variants={fadeInUp} className="mb-10">
-                            <span className="text-7xl md:text-8xl font-black">AED 699</span>
-                            <span className="text-3xl text-black/40 ml-2 line-through">AED 1,100</span>
+                            <span className="text-7xl md:text-8xl font-black">AED 1,499</span>
+                            <span className="text-3xl text-black/40 ml-2 line-through">AED 2,999</span>
                         </motion.div>
 
                         <motion.div variants={fadeInUp}>
