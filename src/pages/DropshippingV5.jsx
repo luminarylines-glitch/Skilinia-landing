@@ -237,7 +237,7 @@ function DropshippingV5() {
                                         transition={{ delay: 0.7 }}
                                         className="inline-flex items-center gap-3 px-5 py-3 bg-white/5 border border-[#d4ff00]/30 backdrop-blur-sm rounded-lg"
                                     >
-                                        <span className="text-[#d4ff00] font-black text-2xl">₹5,900</span>
+                                        <span className="text-[#d4ff00] font-black text-2xl">₹8,500</span>
                                         <span className="text-gray-500 line-through text-lg">₹25,000</span>
                                         <span className="bg-[#FF2C2C] text-white text-xs font-black px-2 py-1 rounded animate-pulse">76% OFF</span>
                                     </motion.div>
@@ -671,7 +671,7 @@ function DropshippingV5() {
                             <span className="text-3xl text-black/40 line-through">₹25,000</span>
                         </motion.div>
                         <motion.div variants={fadeInUp} className="mb-4">
-                            <span className="text-7xl md:text-8xl font-black">₹5,900</span>
+                            <span className="text-7xl md:text-8xl font-black">₹8,500</span>
                         </motion.div>
                         <motion.div variants={fadeInUp} className="mb-10">
                             <span className="inline-block bg-black text-[#d4ff00] font-black text-sm px-4 py-2 tracking-widest">76% OFF — LAUNCH PRICE</span>
@@ -756,7 +756,7 @@ function DropshippingV5() {
                     >
                         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3">
-                                <span className="text-[#d4ff00] font-black text-xl sm:text-2xl">₹5,900</span>
+                                <span className="text-[#d4ff00] font-black text-xl sm:text-2xl">₹8,500</span>
                                 <span className="text-gray-500 line-through text-sm sm:text-base">₹25,000</span>
                                 <span className="bg-[#FF2C2C] text-white text-[10px] sm:text-xs font-black px-2 py-1 rounded animate-pulse hidden sm:inline-block">76% OFF</span>
                             </div>
